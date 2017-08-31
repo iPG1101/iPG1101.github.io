@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Level Editor for SLR</title>
+	<style>jscript{d=play:none;}*{padding:0;margin:0;}</style>
+</head>
+<body>
+<canvas>Level Editor for SLR needs a newer browser</canvas>
+<!--wtf have i created-->
+<jScript>
+
+</jScript>
+<script>
+window.$ = document.querySelector.bind(document)
+canvas = $('canvas')
+context = canvas.getContext('2d')
+l = [
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],//remove us
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],//remove us
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],//remove us
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+];
+block = [];
+block.push('#09f')
+block.push('#630')
+block.push('#090')
+block.push('#036')
+draw = function(){
+	canvas.width = l[0].length * 16;
+	canvas.height = l.length * 16;
+	context.strokeWeight = 1;
+	context.strokeWidth = 1;
+	context.clearRect(0,0,canvas.width,canvas.height)
+	for(i = 0; i < l.length; i ++){
+		for(j = 0; j < l[i].length; j ++){
+			context.fillStyle = block[l[i][j]];
+			size = 16;
+			context.fillRect(j*size,i*size,size,size)
+			context.strokeRect(j*size,i*size,size,size)
+		}
+	}
+	setTimeout(draw, 100)
+}
+draw();
+canvas.onclick = function(e){
+	pos = [e.pageX / 16, e.pageY / 16];
+	pos [0] = Math.floor(pos[0]);
+	pos [1] = Math.floor(pos[1]);
+	l[pos[1]][pos[0]]++;
+	l[pos[1]][pos[0]]=l[pos[1]][pos[0]]%block.length;
+};
+</script>
+<b onclick='prompt("",l);'>prompt("",l);</b>
+</body>
+</html>
