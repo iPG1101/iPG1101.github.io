@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="favicon" href="virtualNES.png">
+    <link rel="icon" href="virtualNES.png">
+    <link rel="shortcut icon" href="virtualNES.png">
+    <link rel="apple-touch-icon" href="virtualNES.png">
+    <title>&zwj;</title>
+    <style>
+    .key, td
+    {
+        background-color: rgba(0, 125, 255, 0.4);
+        /*border-radius: 100px;*/
+        border-radius: 25px;
+        width: 26pt;
+        height: 15pt;
+        padding: 15pt;
+        font: 200% Ariel;
+        margin: 11%;
+    }
+    right 
+    {
+        position: absolute; right: 0; bottom: 30px; display: none;
+    }
+    left 
+    {
+        position: absolute; left: 0; bottom: 30px;
+    }
+
+    </style>
+</head>
+
+<body>
+    <center><span id="emulator"></span><button onclick="document.getElementsByTagName('right')[0].style.display=document.getElementsByTagName('right')[0].style.display=='block'?'none':'block'">Controller#2</button></center>
+    <!-- 
+    <h2>Controls</h2> -->
+<!--     <table id="controls">
+        <tr>
+            <th>Button</th>
+            <th>Player 1</th>
+            <th>Player 2</th>
+        </tr>
+        <tr>
+            <td>Left</td>
+            <td>Left</td>
+            <td>Num-4</td>
+        </tr>
+            <td>Right</td>
+            <td>Right</td>
+            <td>Num-6</td>
+        </tr>
+        <tr>
+            <td>Up</td>
+            <td>Up</td>
+            <td>Num-8</td>
+        </tr>
+        <tr>
+            <td>Down</td>
+            <td>Down</td>
+            <td>Num-2</td>
+        </tr>
+        <tr>
+            <td>A</td>
+            <td>X</td>
+            <td>Num-7</td>
+        </tr>
+        <tr>
+            <td>B</td>
+            <td>Z/Y</td>
+            <td>Num-9</td>
+        </tr>
+        <tr>
+            <td>Start</td>
+            <td>Enter</td>
+            <td>Num-1</td>
+        </tr>
+        <tr>
+            <td>Select</td>
+            <td>Ctrl</td>
+            <td>Num-3</td>
+        </tr>
+    </table>
+ -->
+    <script src="lib/jquery-1.4.2.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="lib/dynamicaudio-min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/nes.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/utils.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/cpu.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/keyboard.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/mappers.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/papu.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/ppu.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/rom.js" type="text/javascript" charset="utf-8"></script>
+    <script src="source/ui.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        var nes;
+         $(function() {
+            nes = new JSNES({
+                'ui': $('#emulator').JSNESUI({
+                    "Simultaneous Multiplayer": [
+                        ['Bubble Bobble', 'local-roms/Bubble Bobble (USA).nes'],
+                        ['Mario Bros. (World)', 'local-roms/Mario Bros. (World).nes'],
+                        ['Dr. Mario (Japan, USA)', 'local-roms/Dr. Mario (Japan, USA).nes'],
+                        ['Yoshi (USA)', 'local-roms/Yoshi (USA).nes'],
+                        ['Yoshi\'s Cookie (USA)', 'local-roms/Yoshi\'s Cookie (USA).nes']
+                    ],
+                    "Turn-based Multiplayer": [
+                        ['Super Mario Bros. (Japan, USA)', 'local-roms/Super Mario Bros. (Japan, USA).nes'],
+                        ['Super Mario Bros. 3 (USA)', 'local-roms/Super Mario Bros. 3 (USA).nes']
+                    ],
+                    "Singleplayer": [
+                        ['Super Mario Bros. 2 (USA)', 'local-roms/Super Mario Bros. 2 (USA).nes'],
+                        ['Dragon Warrior (USA)', 'local-roms/Dragon Warrior (USA).nes'],
+                        ['Legend of Zelda, The (USA)', 'local-roms/Legend of Zelda, The (USA).nes'],
+                        ['Bomberman (USA)', 'local-roms/Bomberman (USA).nes'],
+                        ['Tetris (USA)', 'local-roms/Tetris (USA).nes'],
+                        ['Super Mario Bros 3. Mix (ROMHACK/USA)', 'local-roms/Super Mario Bros 3. Mix (ROMHACKED).nes']
+                    ]
+                })
+            });
+
+         });
+
+         function pressBTN(e, id, boolean, c){
+            e.preventDefault();
+            eval("nes.keyboard.state"+(1+(c||0))+"[nes.keyboard.keys."+id+"] = "+boolean)
+        }
+        window.ontouchmove = function(e){e.preventDefault();}
+
+    </script>
+    <left><table>
+    <tr><td></td><td ontouchstart="pressBTN(event, 'KEY_UP', true);" ontouchend="pressBTN(event, 'KEY_UP', false);">&uparrow;</td><td></td></tr>
+    <tr><td ontouchstart="pressBTN(event, 'KEY_LEFT', true);" ontouchend="pressBTN(event, 'KEY_LEFT', false);">&leftarrow;</td><td style='color: #3AF'>#1</td><td ontouchstart="pressBTN(event, 'KEY_RIGHT', true);" ontouchend="pressBTN(event, 'KEY_RIGHT', false);">&rightarrow;</td><td ontouchstart="pressBTN(event, 'KEY_B', true);" ontouchend="pressBTN(event, 'KEY_B', false);">B</td><td ontouchstart="pressBTN(event, 'KEY_A', true);" ontouchend="pressBTN(event, 'KEY_A', false);">
+    A</td></tr>
+    <tr><td></td><td class="button" ontouchstart="pressBTN(event, 'KEY_DOWN', true);" ontouchend="pressBTN(event, 'KEY_DOWN', false);">&downarrow;</td><td></td></tr><tr></tr></table><br/><br/>
+    <span class="key" ontouchstart="pressBTN(event, 'KEY_SELECT', true);" ontouchend="pressBTN(event, 'KEY_SELECT', false);" style="font: 16px Ariel">SELECT</span>
+    <span class="key" ontouchstart="pressBTN(event, 'KEY_START', true);" ontouchend="pressBTN(event, 'KEY_START', false);" style="font: 16px Ariel">START</span></left>
+
+    <right>
+    <table>
+    <tr><td></td><td ontouchstart="pressBTN(event, 'KEY_UP', true, 1);" ontouchend="pressBTN(event, 'KEY_UP', false, 1);">&uparrow;</td><td></td></tr>
+    <tr><td ontouchstart="pressBTN(event, 'KEY_LEFT', true, 1);" ontouchend="pressBTN(event, 'KEY_LEFT', false, 1);">&leftarrow;</td><td style='color: #3AF'>#2</td><td ontouchstart="pressBTN(event, 'KEY_RIGHT', true, 1);" ontouchend="pressBTN(event, 'KEY_RIGHT', false, 1);">&rightarrow;</td><td ontouchstart="pressBTN(event, 'KEY_B', true, 1);" ontouchend="pressBTN(event, 'KEY_B', false, 1);">B</td><td ontouchstart="pressBTN(event, 'KEY_A', true, 1);" ontouchend="pressBTN(event, 'KEY_A', false, 1);">
+    A</td></tr>
+    <tr><td></td><td class="button" ontouchstart="pressBTN(event, 'KEY_DOWN', true, 1);" ontouchend="pressBTN(event, 'KEY_DOWN', false, 1);">&downarrow;</td><td></td></tr><tr></tr></table><br/><br/>
+    <span class="key" ontouchstart="pressBTN(event, 'KEY_SELECT', true, 1);" ontouchend="pressBTN(event, 'KEY_SELECT', false, 1);" style="font: 16px Ariel">SELECT</span>
+    <span class="key" ontouchstart="pressBTN(event, 'KEY_START', true, 1);" ontouchend="pressBTN(event, 'KEY_START', false, 1);" style="font: 16px Ariel">START</span></right>
+    <!--
+        setKey: function(key, value) {
+            switch (key) {
+                case 88: this.state1[this.keys.KEY_A] = value; break;      // X
+                case 89: this.state1[this.keys.KEY_B] = value; break;      // Y (Central European keyboard)
+                case 90: this.state1[this.keys.KEY_B] = value; break;      // Z
+                case 17: this.state1[this.keys.KEY_SELECT] = value; break; // Right Ctrl
+                case 13: this.state1[this.keys.KEY_START] = value; break;  // Enter
+                case 38: this.state1[this.keys.KEY_UP] = value; break;     // Up
+                case 40: this.state1[this.keys.KEY_DOWN] = value; break;   // Down
+                case 37: this.state1[this.keys.KEY_LEFT] = value; break;   // Left
+                case 39: this.state1[this.keys.KEY_RIGHT] = value; break;  // Right
+
+                case 103: this.state2[this.keys.KEY_A] = value; break;     // Num-7
+                case 105: this.state2[this.keys.KEY_B] = value; break;     // Num-9
+                case 99: this.state2[this.keys.KEY_SELECT] = value; break; // Num-3
+                case 97: this.state2[this.keys.KEY_START] = value; break;  // Num-1
+                case 104: this.state2[this.keys.KEY_UP] = value; break;    // Num-8
+                case 98: this.state2[this.keys.KEY_DOWN] = value; break;   // Num-2
+                case 100: this.state2[this.keys.KEY_LEFT] = value; break;  // Num-4
+                case 102: this.state2[this.keys.KEY_RIGHT] = value; break; // Num-6
+                default: return true;
+            }
+            return false; // preventDefault
+        },
+    -->
+    <!--[if IE]>
+        <script type="text/vbscript" src="source/jsnes-ie-hacks.vbscript"></script>
+    <![endif]-->
+
+</body>
+</html>

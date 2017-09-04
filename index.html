@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>Home | iPhoneGuy1101's Things</title>
-	<style type="text/css">
-		div {
-			border-radius: 20%;
-			padding: 60px;
-			margin: 60px;
-			width: 120px;
-			height: 60px;
-			background-size: 100% 100%;
-		};
-		.fps{
-			display: block;
-		}
-	</style>
-	<meta http-equiv="Pragma" content="no-cache">
-	<meta http-equiv="Expires" content="-1">
-</head>
-<body>
-<div style='background: url("Game/slr.jpeg");' onclick='location="Game/Super Luigi Run"'><b>Game</b></div>
-	
-	<b style='position: absolute; left: 32px; bottom: 32px; color: #09F'><a href='mailto:iPG1101@aol.com?'>iPG1101@aol.com</a></b>
-</body>
+  <head>
+    <title>John's Lazy Homepage</title>
+    <link rel='icon' href='icon_homepage.png' />
+    <link rel='favicon' href='icon_homepage.png' />
+    <link rel='shortcut icon' href='icon_homepage.png' />
+    <link rel='apple-touch-icon' href='icon_homepage.png' />
+    <meta name='application-name' content='LazyPage'/>
+    <meta name='apple-mobile-web-app-title' content='LazyPage'/>
+  </head>
+  <body>
+    <script src='app_loader.js'></script>
+    <script>
+      window.onload = function(){
+        app_list = ["virtualNES", "SuperRun"];
+        app_load(app_list);
+      }
+    </script>
+  </body>
 </html>

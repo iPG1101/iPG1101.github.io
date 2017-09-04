@@ -1,0 +1,17 @@
+img{
+  width: 40%;
+  height: auto;
+  padding: 3%;
+  filter: drop-shadow(16px);
+}
+html{
+  height: 100%
+}
+body{
+  background-attachment: fixed
+  background: #060;
+  background-image: -o-linear-gradient(#070, #020);
+  background-image: -moz-linear-gradient(#070, #020);
+  background-image: -webkit-linear-gradient(#070, #020);
+  background-image: linear-gradient(#070, #020);
+}
