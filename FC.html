@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>FlowerCreator</title>
+</head>
+<body>
+	<script>
+	var Flower = {
+		getSize: function(){
+			return Math.random()*50+20;
+		},
+		getPetalCount: function(){
+			return Math.floor(Math.random()*3+5)+1;
+		},
+		createInstance: function(x,y,otherdata){
+			otherdata = otherdata || {};
+			otherdata.x = x;
+			otherdata.y = y;
+			return (new Flower.flowerObject(otherdata).init());
+		},
+		flowerObject: function(data){
+			data = data || {};
+			this.x = data.x || 16;
+			this.y = data.y || 16;
+			this.rotating = data.rotating || false;
+			this.velRotate = data.rotateSpeed || false;
+			this.points = data.points || null;
+			this.size = data.size || 0;
+			this.colour = data.color || data.colour || 'rgba(RGBC,RGBC,RGBC,1)'.replace('RGBC', Math.floor(Math.random()*255)).replace('RGBC', Math.floor(Math.random()*255)).replace('RGBC', Math.floor(Math.random()*255));
+			this.show = function(){
+				for(var i = 0; i < this.points.length; i++){
+					context.beginPath();
+					context.fillStyle = this.colour;
+					console.log(this.x + '/' + this.points[i][0]);
+					console.log(this.y + '/' + this.points[i][1]);
+					context.arc(this.x + this.points[i][0], this.y + this.points[i][1], this.size || 0, Math.PI * 2, false);
+					context.fill();
+					context.strokeStyle = 'rgba(0,0,0,0.3)'
+					context.stroke();
+					context.closePath();
+				};
+				context.beginPath();
+				context.fillStyle = 'yellow';
+				context.arc(this.x, this.y, this.size*0.75, Math.PI * 2, false);
+				context.fill();
+				context.strokeStyle = 'rgba(0,0,0,0.3)'
+				context.stroke();
+				context.closePath();
+			};
+			this.init = function(){
+				this.size = Flower.getSize();
+				this.points = [];
+				for(var i = 0; i < Flower.getPetalCount(); i++){
+					var x = Math.sin(i)*this.size;
+					var y = Math.cos(i)*this.size;
+					this.points[i] = [x, y];
+				};
+				return this;
+			};
+		}
+	};
+	var canvas, 
+		context = (canvas = document.createElement('canvas')).getContext('2d');
+	document.body.appendChild(canvas);
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	document.body.style.overflow = 'hidden';
+	document.body.style.margin = document.body.style.padding = '0px';
+	canvas.onclick = function(e){
+		e.preventDefault();
+		x = e.pageX || e.screenX;
+		y = e.pageY || e.screenY;
+		var flower = Flower.createInstance(x, y);
+		flower.show();
+	};
+
+	canvas.ontouchstart = function(e){
+		e.preventDefault();
+		x = e.changedTouches[0].pageX || e.changedTouches[0].screenX;
+		y = e.changedTouches[0].pageY || e.changedTouches[0].screenY;
+		var flower = Flower.createInstance(x, y);
+		flower.show();
+	};
+	function a(){
+		var x = Math.random()*window.innerWidth;
+		var y = Math.random()*window.innerHeight;
+		var flower = Flower.createInstance(x, y);
+		flower.show();
+		setTimeout(a, 1000/30);
+	}
+	//a();
+	</script>
+</body>
+</html>
