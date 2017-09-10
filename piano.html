@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Let it be</title>
+	<title>ePiano</title>
 </head>
 <body>
 <script>
-
+window.onerror = function(){for(var i = 0; i < arguments.length; i++) alert(arguments[i]);}
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playNote(frequency, duration) {
