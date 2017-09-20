@@ -130,7 +130,30 @@
             eval("nes.keyboard.state"+(1+(c||0))+"[nes.keyboard.keys."+id+"] = "+boolean)
         }
         window.ontouchmove = function(e){e.preventDefault();}
+var a = "<button onclick='saveGame()'>SaveState</button>\
+<input type='file' value='Select savestate' onchange='loadGame(event)'></input>";
+b = document.createElement('b');
+b.innerHTML = a;b.style.position = 'absolute';
+b.style.bottom = '0';
+b.style.right  = '0';
+document.body.appendChild(b);
 
+function saveGame(){
+	var a = JSON.stringify(nes.cpu.mem);
+	var b = document.createElement('a');
+	b.href = 'data:attachment/text,'+a;
+	b.target = '_blank';
+	b.download = '8bit.save';
+	b.click();
+};
+function loadGame(evt){
+	var file = evt.target.files[0];
+	var reader = new FileReader();
+	reader.readAsText(file, "UTF-8");
+	reader.onload = function (evt) {
+		nes.cpu.mem = JSON.parse(evt.target.result);
+	}
+};
     </script>
     <left><table>
     <tr><td></td><td ontouchstart="pressBTN(event, 'KEY_UP', true);" ontouchend="pressBTN(event, 'KEY_UP', false);">&uparrow;</td><td></td></tr>
