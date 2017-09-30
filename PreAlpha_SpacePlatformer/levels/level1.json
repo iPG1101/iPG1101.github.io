@@ -1,0 +1,9 @@
+({
+	gravityForce: 0.025,
+	entities: [
+		new Block(67,281,354,44),
+		new Block(967,276,364,57),
+		new Decoration('spaceship.png',0,222,192,96),
+		new Finish(1250)
+	]
+})
