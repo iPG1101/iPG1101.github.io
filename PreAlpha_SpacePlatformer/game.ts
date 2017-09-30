@@ -1,3 +1,6 @@
+const BUILD_NUMBER: string = "96B";
+
+
 var c: HTMLCanvasElement = document.createElement("canvas"),
 	ctx: CanvasRenderingContext2D = c.getContext("2d");
 
@@ -28,6 +31,40 @@ class Entity{
 		this.texture[1].src = r;
 		this.x = x;
 		this.y = y;
+	};
+};
+class Enemy extends Entity{
+	texture: Array<HTMLImageElement> = [new Image(), new Image()];
+	show: Function = function(){
+		ctx.drawImage(this.texture[this.facing], this.x-32 - Game.player.x+WIDTH/2-32, this.y-48, 64, 96);
+	};
+	update: Function = function(){
+		var moveX: boolean = true;
+		this.x += this.velX;
+		this.y += this.velY;
+		for(var i in Game.entities) {
+			if(!Game.entities[i].checkCollision(this.x+this.velX, this.y-2)) {
+				// this.velX = 0;
+				moveX = false; //If you are going to collide with an object if you go any lower, then do not do it!
+			}
+		}
+		if(moveX) this.x += this.velX;
+		else (this.velX*=-1, this.x+=this.velX);
+		if(this.fuel>=100) this.fuel = 99.9;
+		for(var i in Game.entities) {
+			if(!Game.entities[i].checkCollision(this.x, this.y+this.velY)) {
+				this.velY = 0;
+				return; //If you are going to collide with an object if you go any lower, then do not do it!
+			}
+		}
+		this.velY += Game.getLevel().gravityForce || 0.02;
+		this.y += this.velY;
+	};
+	checkCollision: Function = function(x: number, y: number){
+		return !(this.x > x - 32 && this.x - 32 < x && this.y > y - 48 && this.y - 48 < y+8) && (Game.player.die()||true);
+	};
+	constructor(l: string, r: string, x: number, y: number){
+		super(l,r,x,y);
 	};
 };
 class Block extends Entity{
@@ -78,6 +115,7 @@ class Finish extends Entity{
 class Player extends Entity{
 	facing: number = 1;
 	fuel: number = 100;
+	lives: number = 3;
 	velY: number = 2;
 	jetpacking: boolean = false;
 	jetpack: Function = function(){
@@ -86,16 +124,31 @@ class Player extends Entity{
 		this.velY -= 0.065;
 		if(this.velY < -2) this.velY = -2;
 	};
+	die: Function = function(){
+		if(this.lives>0){
+			this.velX = 0; this.velY = 1;
+			this.x = WIDTH/5; this.y = HEIGHT/3;
+			this.lives--;
+		} else {
+			//Game over sequence
+			Game.popupbox('Game over. Do you want to be revived?', ['Yes, revive me!', 'No, I will be done for now...'], [function(){Game.crLevel = 0, Game.initialize(), this.lives = 3, this.fuel = 100;}, function(){window.history.back();}])
+
+			this.velX = 0; this.velY = 1;
+			this.x = WIDTH/5; this.y = HEIGHT/3;
+			this.lives--;
+		}
+	};
 	update: Function = function(){
 		var moveX: boolean = true;
 		if(this.jetpacking) this.jetpack();
+		if(this.y>HEIGHT) this.die();
 		if(this.velX < 0) this.facing = 0;
 		else if(this.velX > 0) this.facing = 1;
 		this.fuel += 0.35;
 		for(var i in Game.entities) {
 			if(!Game.entities[i].checkCollision(this.x+this.velX, this.y-2)) {
 				// this.velX = 0;
-				moveX = false; //If you are going to collide with an object if you go any lower, then do not do it!
+				moveX = false; //If you are going to collide with an object if you go any more to the side, then do not do it!
 			}
 		}
 		if(moveX) this.x += this.velX*2;
@@ -112,10 +165,14 @@ class Player extends Entity{
 	show: Function = function(){
 		// ctx.drawImage(this.texture[this.facing], this.x-32, this.y-96, 64, 96);
 		ctx.drawImage(this.texture[this.facing], WIDTH/2-64, this.y-96, 64, 96);
+		ctx.font = '20px Ariel';
+		ctx.fillStyle = 'rgb(0,127,255)'
+		ctx.fillText('Lives: '+this.lives, 4, 18);
 		ctx.fillStyle = 'rgb(RED,GREEN,0)'
 			.replace(/RED/g, (255-Math.floor(2.55*this.fuel)).toString())
 			.replace(/GREEN/g, (Math.floor(2.55*this.fuel)).toString());
-		ctx.fillRect(4,4,this.fuel,16);
+		ctx.fillText('Fuel: ', 4, 42);
+		ctx.fillRect(ctx.measureText('Fuel').width*1.5,28,this.fuel,16);
 	};
 	constructor(){
 		super("char_left.png", "char_right.png", WIDTH/5, HEIGHT/3);
@@ -129,7 +186,7 @@ var Game = {
 		request.send(null);
 		return eval(request.responseText);
 	},
-	levels: new Array(32),
+	levels: new Array(2),
 	crLevel: 0,
 	getLevel: function(){
 		return Game.levels[Game.crLevel];
@@ -160,17 +217,24 @@ var Game = {
 		Game.player.velY = 1;
 	},
 	initialize: function(){
+		c.style.background = 'url(background.png)';
+		c.style.backgroundSize = 'cover';
 		c.width = WIDTH;
 		c.height = HEIGHT;
-		document.body.appendChild(c);
 		ctx.imageSmoothingEnabled = false;
-		for(var i = 0; i < Game.levels.length; i++) Game.levels[i] = Game.loadFile('levels/level'+(i+1)+'.json');
 		Game.refreshLevel();
-		Game.frame();
+		Game.popupbox('<b>Oh no!</b><br/><br/>You were flying your SpaceCraft, but you got hit by a tin can while moving at 952 kilometres per hour! You need to get to the nearest village, SunTown! It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/><br/><b style=\'color: red\'>NOTE: Game is in EARLY BETA (build '+BUILD_NUMBER+'), expect bugs/glitches/crashes!</b>',["Ok, I'm ready!"],[Game.frame]);
+	},
+	showLoadingScreen: function(){
+		document.body.appendChild(c);
+		c.style.background = 'url(splash_screen.png)';
+		c.style.backgroundSize = 'cover';
+		for(var i = 0; i < Game.levels.length; i++) Game.levels[i] = Game.loadFile('levels/level'+(i+1)+'.json');
 		for(var j in Game.dpad.buttons) Game.dpad.buttons[j].ontouchstart = Game.dpad.handlers.down[j];
 		for(var j in Game.dpad.buttons) Game.dpad.buttons[j].onmousedown = Game.dpad.handlers.down[j];
 		for(var j in Game.dpad.buttons) Game.dpad.buttons[j].ontouchend = Game.dpad.handlers.up[j];
 		for(var j in Game.dpad.buttons) Game.dpad.buttons[j].onmouseup = Game.dpad.handlers.up[j];
+		setTimeout(Game.initialize, 1000);
 	},
 	keyhandler: {
 		keydown: function(e){
@@ -187,6 +251,36 @@ var Game = {
 			if(key == 65 || key == 37) Game.player.velX = 0;
 			if(key == 68 || key == 39) Game.player.velX = 0;
 		}
+	},
+	popupbox: function(q: string, a: Array<string>, b: Array<Function>){
+		var popup = document.createElement('div');
+		popup.style.position = 'absolute';
+		popup.style.width = '75%';
+		popup.style.height = '75%';
+		popup.style.top = '12.5%';
+		popup.style.left = '12.5%';
+		popup.style.border = 'double 4px gold';
+		popup.style.fontSize = '24px';
+		popup.style.background = 'black'
+		popup.style.color = 'white';
+		document.body.appendChild(popup);
+		popup.innerHTML = q;
+		for(var i in a){
+			var temp = document.createElement('div');
+			temp.innerHTML=a[i];
+			temp.onclick = function(){
+				popup.style.display = 'none'
+				document.body.removeChild(popup);
+				popup = undefined;
+				b[this.id]();
+			}.bind(temp);
+			temp.id = i;
+			temp.style.background='#333';
+			temp.style.position = 'absolute';
+			temp.style.bottom = '1%';
+			temp.style[(a[i]==a[0])?'left':'right'] = '0';
+			popup.appendChild(temp);
+		};
 	},
 	dpad: {
 		handlers: {
@@ -235,4 +329,4 @@ var Game = {
 
 window.onkeydown = Game.keyhandler.keydown;
 window.onkeyup   = Game.keyhandler.keyup;
-window.onload = Game.initialize;
+window.onload = Game.showLoadingScreen;
