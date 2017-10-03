@@ -1,4 +1,4 @@
-const BUILD_NUMBER: string = "96B";
+const BUILD_NUMBER: string = "116G";
 
 
 var c: HTMLCanvasElement = document.createElement("canvas"),
@@ -61,7 +61,8 @@ class Enemy extends Entity{
 		this.y += this.velY;
 	};
 	checkCollision: Function = function(x: number, y: number){
-		return !(this.x > x - 32 && this.x - 32 < x && this.y > y - 48 && this.y - 48 < y+8) && (Game.player.die()||true);
+		// if()
+		return (!(this.x > x - 32 && this.x - 32 < x && this.y > y - 48 && this.y - 48 < y+8));
 	};
 	constructor(l: string, r: string, x: number, y: number){
 		super(l,r,x,y);
@@ -71,6 +72,11 @@ class Block extends Entity{
 	w: number = 0;
 	h: number = 0;
 	checkCollision: Function = function(x: number, y: number){
+		var nc = !(this.x < x && this.x+this.w > x && this.y <= y-8 && this.y+this.h >= y); //Not colliding
+		if(!nc/*if colliding*/) {
+			if(x < this.x+this.w/2) Game.player.velX -= 0.25;
+			if(x > this.x+this.w/2) Game.player.velX += 0.25;
+		}
 		return !(this.x < x && this.x+this.w > x && this.y <= y && this.y+this.h+2 >= y);
 	};
 	show: Function = function(){
@@ -85,16 +91,32 @@ class Block extends Entity{
 class Decoration extends Entity{
 	w: number = 0;
 	h: number = 0;
+	frames: number = 0;
+	crFrame: number = 0;
+	canCollide: boolean = true;
 	checkCollision: Function = function(x: number, y: number){
-		return !(this.x < x && this.x+this.w > x && this.y <= y && this.y+this.h+2 >= y);
+		var nc = !(this.x < x && this.x+this.w > x && this.y <= y+4 && this.y+this.h >= y+4); //Not colliding
+		if(!this.canCollide&&!nc/*if colliding*/) {
+			if(x-3 < this.x+8) Game.player.velX -= 0.25;
+			if(x+3 > this.x+this.w-8) Game.player.velX += 0.25;
+		}
+		// if() return false;
+		return !(!this.canCollide && this.x < x && this.x+this.w > x && this.y <= y && this.y+this.h+2 >= y);
 	};
 	show: Function = function(){
-		ctx.drawImage(this.texture[0], this.x - Game.player.x+WIDTH/2-32, this.y, this.w, this.h);
+		this.frames++;
+		if(this.frames>=15) {
+			this.frames = 0;
+			this.crFrame ++;
+		}
+		if(this.crFrame >= 2) this.crFrame = 0;
+		ctx.drawImage(this.texture[this.crFrame%2], this.x - Game.player.x+WIDTH/2-32, this.y, this.w, this.h);
 	};
-	constructor(image: string, x: number, y: number, w: number, h: number){
-		super(image, image, x, y);
+	constructor(image: string, x: number, y: number, w: number, h: number, image2: string | null, finalArgument: null | boolean){
+		super(image, image2!=null?image2:image, x, y);
 		this.w = w;
 		this.h = h;
+		this.canCollide = finalArgument || true;
 	}
 };
 class Finish extends Entity{
@@ -131,7 +153,7 @@ class Player extends Entity{
 			this.lives--;
 		} else {
 			//Game over sequence
-			Game.popupbox('Game over. Do you want to be revived?', ['Yes, revive me!', 'No, I will be done for now...'], [function(){Game.crLevel = 0, Game.initialize(), this.lives = 3, this.fuel = 100;}, function(){window.history.back();}])
+			Game.popupbox('Game over. Do you want to be revived?', ['Yes, revive me!', 'No, I will be done for now...'], [function(){location.reload();}, function(){window.history.back();}])
 
 			this.velX = 0; this.velY = 1;
 			this.x = WIDTH/5; this.y = HEIGHT/3;
@@ -174,8 +196,8 @@ class Player extends Entity{
 		ctx.fillText('Fuel: ', 4, 42);
 		ctx.fillRect(ctx.measureText('Fuel').width*1.5,28,this.fuel,16);
 	};
-	constructor(){
-		super("char_left.png", "char_right.png", WIDTH/5, HEIGHT/3);
+	constructor(id: number|String){
+		super("char"+id+"_left.png", "char"+id+"_right.png", WIDTH/5, HEIGHT/3);
 	};
 };
 
@@ -186,12 +208,12 @@ var Game = {
 		request.send(null);
 		return eval(request.responseText);
 	},
-	levels: new Array(2),
+	levels: new Array(3),
 	crLevel: 0,
 	getLevel: function(){
 		return Game.levels[Game.crLevel];
 	},
-	player: new Player(),
+	player: new Player(0),
 	entities: [],
 	framerate: 60,
 	behindTheScenes: {
@@ -201,18 +223,21 @@ var Game = {
 		ctx.clearRect(0,0,WIDTH,HEIGHT)
 		Game.framerate = Math.floor(1/((new Date().getTime() - Game.behindTheScenes.lastFrame)/10))/100;
 		Game.behindTheScenes.lastFrame = new Date().getTime();
-		Game.player.show();
-		Game.player.update();
 		for(var i in Game.entities) {
 			Game.entities[i].show();
 			Game.entities[i].update();
 		}
-		setTimeout(Game.frame, 1000/50);
+		Game.player.show();
+		Game.player.update();
+		setTimeout(Game.frame, 1000/60);
 	},
 	refreshLevel: function(){
+		var lives = Game.player.lives;
+		Game.player = new Player(Game.levels[Game.crLevel].playertexture);
 		Game.entities = Game.levels[Game.crLevel].entities;
 		Game.player.x = WIDTH/5;
 		Game.player.y = HEIGHT/3;
+		Game.player.lives = lives;
 		Game.player.velX = 0;
 		Game.player.velY = 1;
 	},

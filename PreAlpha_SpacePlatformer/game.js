@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var BUILD_NUMBER = "96B";
+var BUILD_NUMBER = "116G";
 var c = document.createElement("canvas"), ctx = c.getContext("2d");
 var WIDTH = 640, HEIGHT = 360;
 var Entity = (function () {
@@ -73,7 +73,8 @@ var Enemy = (function (_super) {
             this.y += this.velY;
         };
         _this.checkCollision = function (x, y) {
-            return !(this.x > x - 32 && this.x - 32 < x && this.y > y - 48 && this.y - 48 < y + 8) && (Game.player.die() || true);
+            // if()
+            return (!(this.x > x - 32 && this.x - 32 < x && this.y > y - 48 && this.y - 48 < y + 8));
         };
         return _this;
     }
@@ -88,6 +89,13 @@ var Block = (function (_super) {
         _this.w = 0;
         _this.h = 0;
         _this.checkCollision = function (x, y) {
+            var nc = !(this.x < x && this.x + this.w > x && this.y <= y - 8 && this.y + this.h >= y); //Not colliding
+            if (!nc /*if colliding*/) {
+                if (x < this.x + this.w / 2)
+                    Game.player.velX -= 0.25;
+                if (x > this.x + this.w / 2)
+                    Game.player.velX += 0.25;
+            }
             return !(this.x < x && this.x + this.w > x && this.y <= y && this.y + this.h + 2 >= y);
         };
         _this.show = function () {
@@ -102,18 +110,37 @@ var Block = (function (_super) {
 ;
 var Decoration = (function (_super) {
     __extends(Decoration, _super);
-    function Decoration(image, x, y, w, h) {
-        var _this = _super.call(this, image, image, x, y) || this;
+    function Decoration(image, x, y, w, h, image2, finalArgument) {
+        var _this = _super.call(this, image, image2 != null ? image2 : image, x, y) || this;
         _this.w = 0;
         _this.h = 0;
+        _this.frames = 0;
+        _this.crFrame = 0;
+        _this.canCollide = true;
         _this.checkCollision = function (x, y) {
-            return !(this.x < x && this.x + this.w > x && this.y <= y && this.y + this.h + 2 >= y);
+            var nc = !(this.x < x && this.x + this.w > x && this.y <= y + 4 && this.y + this.h >= y + 4); //Not colliding
+            if (!this.canCollide && !nc /*if colliding*/) {
+                if (x - 3 < this.x + 8)
+                    Game.player.velX -= 0.25;
+                if (x + 3 > this.x + this.w - 8)
+                    Game.player.velX += 0.25;
+            }
+            // if() return false;
+            return !(!this.canCollide && this.x < x && this.x + this.w > x && this.y <= y && this.y + this.h + 2 >= y);
         };
         _this.show = function () {
-            ctx.drawImage(this.texture[0], this.x - Game.player.x + WIDTH / 2 - 32, this.y, this.w, this.h);
+            this.frames++;
+            if (this.frames >= 15) {
+                this.frames = 0;
+                this.crFrame++;
+            }
+            if (this.crFrame >= 2)
+                this.crFrame = 0;
+            ctx.drawImage(this.texture[this.crFrame % 2], this.x - Game.player.x + WIDTH / 2 - 32, this.y, this.w, this.h);
         };
         _this.w = w;
         _this.h = h;
+        _this.canCollide = finalArgument || true;
         return _this;
     }
     return Decoration;
@@ -140,8 +167,8 @@ var Finish = (function (_super) {
 ;
 var Player = (function (_super) {
     __extends(Player, _super);
-    function Player() {
-        var _this = _super.call(this, "char_left.png", "char_right.png", WIDTH / 5, HEIGHT / 3) || this;
+    function Player(id) {
+        var _this = _super.call(this, "char" + id + "_left.png", "char" + id + "_right.png", WIDTH / 5, HEIGHT / 3) || this;
         _this.facing = 1;
         _this.fuel = 100;
         _this.lives = 3;
@@ -165,7 +192,7 @@ var Player = (function (_super) {
             }
             else {
                 //Game over sequence
-                Game.popupbox('Game over. Do you want to be revived?', ['Yes, revive me!', 'No, I will be done for now...'], [function () { Game.crLevel = 0, Game.initialize(), this.lives = 3, this.fuel = 100; }, function () { window.history.back(); }]);
+                Game.popupbox('Game over. Do you want to be revived?', ['Yes, revive me!', 'No, I will be done for now...'], [function () { location.reload(); }, function () { window.history.back(); }]);
                 this.velX = 0;
                 this.velY = 1;
                 this.x = WIDTH / 5;
@@ -228,12 +255,12 @@ var Game = {
         request.send(null);
         return eval(request.responseText);
     },
-    levels: new Array(2),
+    levels: new Array(3),
     crLevel: 0,
     getLevel: function () {
         return Game.levels[Game.crLevel];
     },
-    player: new Player(),
+    player: new Player(0),
     entities: [],
     framerate: 60,
     behindTheScenes: {
@@ -243,18 +270,21 @@ var Game = {
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
         Game.framerate = Math.floor(1 / ((new Date().getTime() - Game.behindTheScenes.lastFrame) / 10)) / 100;
         Game.behindTheScenes.lastFrame = new Date().getTime();
-        Game.player.show();
-        Game.player.update();
         for (var i in Game.entities) {
             Game.entities[i].show();
             Game.entities[i].update();
         }
-        setTimeout(Game.frame, 1000 / 50);
+        Game.player.show();
+        Game.player.update();
+        setTimeout(Game.frame, 1000 / 60);
     },
     refreshLevel: function () {
+        var lives = Game.player.lives;
+        Game.player = new Player(Game.levels[Game.crLevel].playertexture);
         Game.entities = Game.levels[Game.crLevel].entities;
         Game.player.x = WIDTH / 5;
         Game.player.y = HEIGHT / 3;
+        Game.player.lives = lives;
         Game.player.velX = 0;
         Game.player.velY = 1;
     },
