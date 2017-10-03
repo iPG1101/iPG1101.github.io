@@ -295,7 +295,7 @@ var Game = {
         c.height = HEIGHT;
         ctx.imageSmoothingEnabled = false;
         Game.refreshLevel();
-        Game.popupbox('<b>Oh no!</b><br/><br/>You were flying your SpaceCraft, but you got hit by a tin can while moving at 952 kilometres per hour! You need to get to the nearest village, SunTown! It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/><br/><b style=\'color: red\'>NOTE: Game is in EARLY BETA (build ' + BUILD_NUMBER + '), expect bugs/glitches/crashes!</b>', ["Ok, I'm ready!"], [Game.frame]);
+        Game.popupbox('<b>Oh no!</b><br/><br/>You were flying your SpaceCraft, but you got hit by a meteorite while moving at 952 kilometres per hour! You need to get to the nearest village, SunTown! It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/><br/><b style=\'color: red\'>NOTE: Game is in EARLY BETA (build ' + BUILD_NUMBER + '), expect bugs/glitches/crashes!</b>', ["Ok, I'm ready!"], [Game.frame]);
     },
     showLoadingScreen: function () {
         document.body.appendChild(c);
