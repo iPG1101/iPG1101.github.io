@@ -208,7 +208,7 @@ var Game = {
 		request.send(null);
 		return eval(request.responseText);
 	},
-	levels: new Array(3),
+	levels: new Array(4),
 	crLevel: 0,
 	getLevel: function(){
 		return Game.levels[Game.crLevel];
