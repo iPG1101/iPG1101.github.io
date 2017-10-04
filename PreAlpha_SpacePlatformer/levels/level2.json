@@ -5,7 +5,7 @@
 		new Block(2,249,200,26),
 		new Block(579,227,134,33),
 		new Block(885,103,132,32),
-		new Block(1639,302,313,28),
+		new Block(1639,302,333,28),
 		new Finish(2003)
 	]
 })
