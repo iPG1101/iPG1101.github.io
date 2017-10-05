@@ -9,5 +9,5 @@
   new Block(2049,229,246,34),
   new Block(2474,132,228,161),
   new Block(2681,5,21,375),
-  new Block(1952,248,34,-253)
+  new Finish(1952)
 ]})
