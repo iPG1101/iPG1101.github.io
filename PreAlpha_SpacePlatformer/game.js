@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var BUILD_NUMBER = "124B";
+var BUILD_NUMBER = "126C";
 var c = document.createElement("canvas"), ctx = c.getContext("2d");
 var WIDTH = 720, HEIGHT = 360;
 var Entity = /** @class */ (function () {
@@ -431,3 +431,17 @@ var Game = {
 window.onkeydown = Game.keyhandler.keydown;
 window.onkeyup = Game.keyhandler.keyup;
 window.onload = Game.showLoadingScreen;
+var fuck = {
+    "this": function () {
+        Game.player.jetpack = function () {
+            if (this.fuel <= 5)
+                return this.jetpacking = false;
+            if (this.velY == 0)
+                this.velY -= 0.225;
+            this.fuel -= 0.5;
+            this.velY -= 0.075;
+            if (this.velY < -2)
+                this.velY = -2;
+        };
+    }
+};

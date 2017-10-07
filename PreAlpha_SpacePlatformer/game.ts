@@ -1,4 +1,4 @@
-const BUILD_NUMBER: string = "116G";
+const BUILD_NUMBER: string = "126C";
 
 
 var c: HTMLCanvasElement = document.createElement("canvas"),
@@ -368,3 +368,15 @@ var Game = {
 window.onkeydown = Game.keyhandler.keydown;
 window.onkeyup   = Game.keyhandler.keyup;
 window.onload = Game.showLoadingScreen;
+
+var fuck={
+	this: function(){
+		Game.player.jetpack = function(){
+			if(this.fuel<=5) return this.jetpacking = false;
+			if(this.velY == 0) this.velY -= 0.225;
+			this.fuel -= 0.5;
+			this.velY -= 0.075;
+			if(this.velY < -2) this.velY = -2;
+		};
+	}
+};
