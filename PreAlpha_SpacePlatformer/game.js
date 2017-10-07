@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var BUILD_NUMBER = "116G";
+var BUILD_NUMBER = "124B";
 var c = document.createElement("canvas"), ctx = c.getContext("2d");
 var WIDTH = 720, HEIGHT = 360;
 var Entity = /** @class */ (function () {
