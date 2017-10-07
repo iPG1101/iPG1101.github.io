@@ -4,7 +4,7 @@ const BUILD_NUMBER: string = "116G";
 var c: HTMLCanvasElement = document.createElement("canvas"),
 	ctx: CanvasRenderingContext2D = c.getContext("2d");
 
-var WIDTH: number = 640,
+var WIDTH: number = 720,
 	HEIGHT: number = 360;
 
 
@@ -123,7 +123,7 @@ class Finish extends Entity{
 	w: number = 0;
 	h: number = 0;
 	checkCollision: Function = function(x: number, y: number){
-		return !(this.x < x && this.x+this.w > x && this.y <= y && this.y+this.h+2 >= y && !(Game.crLevel++,Game.refreshLevel()));
+		return !(this.x < x && this.x+this.w > x && this.y <= y && this.y+this.h+2 >= y && !(Game.crLevel++,(Game.crLevel<Game.levels.length-1)?(Game.player.lives++,Game.refreshLevel()):(Game.crLevel = 0, Game.popupbox('You win!', ['Play again!', 'Go to homepage'], [function(){}, function(){document.location.href='https://iPG1101.github.io'}]))));
 	};
 	show: Function = function(){
 		ctx.drawImage(this.texture[0], this.x - Game.player.x+WIDTH/2-32, this.y, this.w, this.h);
@@ -140,8 +140,10 @@ class Player extends Entity{
 	lives: number = 3;
 	velY: number = 2;
 	jetpacking: boolean = false;
+	jp: HTMLImageElement = new Image();
 	jetpack: Function = function(){
-		if(this.fuel<=5) return;
+		if(this.fuel<=5) return this.jetpacking = false;
+		if(this.velY == 0) this.velY -= 0.225;
 		this.fuel -= 2;
 		this.velY -= 0.065;
 		if(this.velY < -2) this.velY = -2;
@@ -153,7 +155,7 @@ class Player extends Entity{
 			this.lives--;
 		} else {
 			//Game over sequence
-			Game.popupbox('Game over. Do you want to be revived?', ['Yes, revive me!', 'No, I will be done for now...'], [function(){location.reload();}, function(){window.history.back();}])
+			Game.popupbox('Game over. Do you want to be revived?', ['Yes, revive me!', 'No, I will be done for now...'], [function(){location.reload();}, function(){document.location.href='https://iPG1101.github.io';}])
 
 			this.velX = 0; this.velY = 1;
 			this.x = WIDTH/5; this.y = HEIGHT/3;
@@ -193,11 +195,16 @@ class Player extends Entity{
 		ctx.fillStyle = 'rgb(RED,GREEN,0)'
 			.replace(/RED/g, (255-Math.floor(2.55*this.fuel)).toString())
 			.replace(/GREEN/g, (Math.floor(2.55*this.fuel)).toString());
-		ctx.fillText('Fuel: ', 4, 42);
-		ctx.fillRect(ctx.measureText('Fuel').width*1.5,28,this.fuel,16);
+		ctx.drawImage(this.jp, 520, 4, 70, 50);
+		ctx.fillRect(640-ctx.measureText('Fuel').width*1.5,28,this.fuel,16);
+		ctx.strokeStyle='#09F';
+		ctx.lineWidth = 2;
+		ctx.strokeRect(640-ctx.measureText('Fuel').width*1.5,28,100,16);
+		ctx.fillText(Math.round(this.fuel).toString()+'%', 640-(ctx.measureText(Math.round(this.fuel)+'%').width)*1.5,28)
 	};
 	constructor(id: number|String){
 		super("char"+id+"_left.png", "char"+id+"_right.png", WIDTH/5, HEIGHT/3);
+		this.jp.src = 'jetpack.png';
 	};
 };
 
@@ -251,6 +258,12 @@ var Game = {
 		Game.popupbox('<b>Oh no!</b><br/><br/>You were flying your SpaceCraft, but you got hit by a meteorite while moving at 952 kilometres per hour! You need to get to the nearest village, SunTown! It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/><br/><b style=\'color: red\'>NOTE: Game is in EARLY BETA (build '+BUILD_NUMBER+'), expect bugs/glitches/crashes!</b>',["Ok, I'm ready!"],[Game.frame]);
 	},
 	showLoadingScreen: function(){
+		var mobile = /iPad|iPhone|iPod|Android|Phone|Touch|Tablet/i.test(navigator.userAgent || navigator.vendor || window['opera'])
+		var dpad_stylesheet = document.createElement('link');
+		dpad_stylesheet.rel = 'stylesheet';
+		if(mobile) dpad_stylesheet.href = 'mobile.css';
+		else dpad_stylesheet.href = 'nonmobile.css';
+		document.head.appendChild(dpad_stylesheet);
 		document.body.appendChild(c);
 		c.style.background = 'url(splash_screen.png)';
 		c.style.backgroundSize = 'cover';

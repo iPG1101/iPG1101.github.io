@@ -22,39 +22,13 @@
 		padding: 0; margin: 0;
 		overflow: hidden;
 	}
-	table{
-		background: rgba(255,255,255,0.4);
-		border-width: 10px;
-		border-radius: 20px;
-		border: solid;
-		font-size: 200%;
-		position: absolute;
-		bottom: 3vh;
-		left: 3vw;
-		display: block;
-	}
-	tr{
-
-	}
-	td{
-		border-radius: 16px;
-		padding: 8px;
-		margin: 8px;
-		width: 64px;   
-		text-align: center;
-		height: 64px;   
-		border: solid 2px black;
-	}
 	</style>
 </head>
 <body>
 	<canvas></canvas>
-	<table>
+	<table style='width: 94vw'>
 		<tr>
-			<td></td><td id='up'>&uparrow;</td><td></td>
-		</tr>
-		<tr>
-			<td id='left'>&leftarrow;</td><td></td><td id='right'>&rightarrow;</td>
+			<td id='left'>&leftarrow;</td><td id='right'>&rightarrow;</td><td style='position: absolute; right: 3vw' id='up'>&uparrow;</td>
 		</tr>
 	</table>
 	<script src='game.js?116G'></script>

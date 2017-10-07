@@ -10,8 +10,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 var BUILD_NUMBER = "116G";
 var c = document.createElement("canvas"), ctx = c.getContext("2d");
-var WIDTH = 640, HEIGHT = 360;
-var Entity = (function () {
+var WIDTH = 720, HEIGHT = 360;
+var Entity = /** @class */ (function () {
     function Entity(l, r, x, y) {
         this.x = 0;
         this.y = 0;
@@ -39,7 +39,7 @@ var Entity = (function () {
     return Entity;
 }());
 ;
-var Enemy = (function (_super) {
+var Enemy = /** @class */ (function (_super) {
     __extends(Enemy, _super);
     function Enemy(l, r, x, y) {
         var _this = _super.call(this, l, r, x, y) || this;
@@ -82,7 +82,7 @@ var Enemy = (function (_super) {
     return Enemy;
 }(Entity));
 ;
-var Block = (function (_super) {
+var Block = /** @class */ (function (_super) {
     __extends(Block, _super);
     function Block(x, y, w, h) {
         var _this = _super.call(this, 'block.png', 'block.png', x, y) || this;
@@ -108,7 +108,7 @@ var Block = (function (_super) {
     return Block;
 }(Entity));
 ;
-var Decoration = (function (_super) {
+var Decoration = /** @class */ (function (_super) {
     __extends(Decoration, _super);
     function Decoration(image, x, y, w, h, image2, finalArgument) {
         var _this = _super.call(this, image, image2 != null ? image2 : image, x, y) || this;
@@ -146,14 +146,14 @@ var Decoration = (function (_super) {
     return Decoration;
 }(Entity));
 ;
-var Finish = (function (_super) {
+var Finish = /** @class */ (function (_super) {
     __extends(Finish, _super);
     function Finish(x) {
         var _this = _super.call(this, 'finish.png', 'finish.png', x, 0) || this;
         _this.w = 0;
         _this.h = 0;
         _this.checkCollision = function (x, y) {
-            return !(this.x < x && this.x + this.w > x && this.y <= y && this.y + this.h + 2 >= y && !(Game.crLevel++, Game.refreshLevel()));
+            return !(this.x < x && this.x + this.w > x && this.y <= y && this.y + this.h + 2 >= y && !(Game.crLevel++, (Game.crLevel < Game.levels.length - 1) ? (Game.player.lives++, Game.refreshLevel()) : (Game.crLevel = 0, Game.popupbox('You win!', ['Play again!', 'Go to homepage'], [function () { }, function () { document.location.href = 'https://iPG1101.github.io'; }]))));
         };
         _this.show = function () {
             ctx.drawImage(this.texture[0], this.x - Game.player.x + WIDTH / 2 - 32, this.y, this.w, this.h);
@@ -165,7 +165,7 @@ var Finish = (function (_super) {
     return Finish;
 }(Entity));
 ;
-var Player = (function (_super) {
+var Player = /** @class */ (function (_super) {
     __extends(Player, _super);
     function Player(id) {
         var _this = _super.call(this, "char" + id + "_left.png", "char" + id + "_right.png", WIDTH / 5, HEIGHT / 3) || this;
@@ -174,9 +174,12 @@ var Player = (function (_super) {
         _this.lives = 3;
         _this.velY = 2;
         _this.jetpacking = false;
+        _this.jp = new Image();
         _this.jetpack = function () {
             if (this.fuel <= 5)
-                return;
+                return this.jetpacking = false;
+            if (this.velY == 0)
+                this.velY -= 0.225;
             this.fuel -= 2;
             this.velY -= 0.065;
             if (this.velY < -2)
@@ -192,7 +195,7 @@ var Player = (function (_super) {
             }
             else {
                 //Game over sequence
-                Game.popupbox('Game over. Do you want to be revived?', ['Yes, revive me!', 'No, I will be done for now...'], [function () { location.reload(); }, function () { window.history.back(); }]);
+                Game.popupbox('Game over. Do you want to be revived?', ['Yes, revive me!', 'No, I will be done for now...'], [function () { location.reload(); }, function () { document.location.href = 'https://iPG1101.github.io'; }]);
                 this.velX = 0;
                 this.velY = 1;
                 this.x = WIDTH / 5;
@@ -239,9 +242,14 @@ var Player = (function (_super) {
             ctx.fillStyle = 'rgb(RED,GREEN,0)'
                 .replace(/RED/g, (255 - Math.floor(2.55 * this.fuel)).toString())
                 .replace(/GREEN/g, (Math.floor(2.55 * this.fuel)).toString());
-            ctx.fillText('Fuel: ', 4, 42);
-            ctx.fillRect(ctx.measureText('Fuel').width * 1.5, 28, this.fuel, 16);
+            ctx.drawImage(this.jp, 520, 4, 70, 50);
+            ctx.fillRect(640 - ctx.measureText('Fuel').width * 1.5, 28, this.fuel, 16);
+            ctx.strokeStyle = '#09F';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(640 - ctx.measureText('Fuel').width * 1.5, 28, 100, 16);
+            ctx.fillText(Math.round(this.fuel).toString() + '%', 640 - (ctx.measureText(Math.round(this.fuel) + '%').width) * 1.5, 28);
         };
+        _this.jp.src = 'jetpack.png';
         return _this;
     }
     ;
@@ -298,6 +306,14 @@ var Game = {
         Game.popupbox('<b>Oh no!</b><br/><br/>You were flying your SpaceCraft, but you got hit by a meteorite while moving at 952 kilometres per hour! You need to get to the nearest village, SunTown! It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/><br/><b style=\'color: red\'>NOTE: Game is in EARLY BETA (build ' + BUILD_NUMBER + '), expect bugs/glitches/crashes!</b>', ["Ok, I'm ready!"], [Game.frame]);
     },
     showLoadingScreen: function () {
+        var mobile = /iPad|iPhone|iPod|Android|Phone|Touch|Tablet/i.test(navigator.userAgent || navigator.vendor || window['opera']);
+        var dpad_stylesheet = document.createElement('link');
+        dpad_stylesheet.rel = 'stylesheet';
+        if (mobile)
+            dpad_stylesheet.href = 'mobile.css';
+        else
+            dpad_stylesheet.href = 'nonmobile.css';
+        document.head.appendChild(dpad_stylesheet);
         document.body.appendChild(c);
         c.style.background = 'url(splash_screen.png)';
         c.style.backgroundSize = 'cover';
