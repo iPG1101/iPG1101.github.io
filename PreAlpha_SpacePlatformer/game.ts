@@ -123,7 +123,7 @@ class Finish extends Entity{
 	w: number = 0;
 	h: number = 0;
 	checkCollision: Function = function(x: number, y: number){
-		return !(this.x < x && this.x+this.w > x && this.y <= y && this.y+this.h+2 >= y && !(Game.crLevel++,(Game.crLevel<Game.levels.length-1)?(Game.player.lives++,Game.refreshLevel()):(Game.crLevel = 0, Game.popupbox('You win!', ['Play again!', 'Go to homepage'], [function(){}, function(){document.location.href='https://iPG1101.github.io'}]))));
+		return !(this.x < x && this.x+this.w > x && this.y <= y && this.y+this.h+2 >= y && !(Game.crLevel++,(Game.crLevel<Game.levels.length)?(Game.player.lives++,Game.refreshLevel()):(Game.crLevel = 0, Game.popupbox('You win!', ['Play again!', 'Go to homepage'], [function(){}, function(){document.location.href='https://iPG1101.github.io'}]))));
 	};
 	show: Function = function(){
 		ctx.drawImage(this.texture[0], this.x - Game.player.x+WIDTH/2-32, this.y, this.w, this.h);
