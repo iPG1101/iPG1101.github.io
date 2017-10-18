@@ -52,6 +52,8 @@ var JSNES = function(opts) {
     this.ui.updateStatus("Ready to load a ROM.");
 };
 
+window.unlimFPS = false;
+
 JSNES.VERSION = "<%= version %>";
 
 JSNES.prototype = {
@@ -79,12 +81,12 @@ JSNES.prototype = {
                 
                 this.frameInterval = setInterval(function() {
                     self.frame();
-                }, this.frameTime);
+                }, window.unlimFPS?0:this.frameTime);
                 this.resetFps();
                 this.printFps();
                 this.fpsInterval = setInterval(function() {
                     self.printFps();
-                }, this.opts.fpsInterval);
+                }, window.unlimFPS?0:this.frameTime);
             }
         }
         else {
