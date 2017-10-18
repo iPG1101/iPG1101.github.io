@@ -8,10 +8,11 @@ html{
   height: 100%
 }
 body{
-  background-attachment: fixed
+  background-size: 100% 100%;
+  background-attachment: fixed;
   background: #060;
-  background-image: -o-linear-gradient(#070, #020);
-  background-image: -moz-linear-gradient(#070, #020);
-  background-image: -webkit-linear-gradient(#070, #020);
-  background-image: linear-gradient(#070, #020);
+  background-image: -o-radial-gradient(#070, #020);
+  background-image: -moz-radial-gradient(#070, #020);
+  background-image: -webkit-radial-gradient(#070, #020);
+  background-image: radial-gradient(#070, #020);
 }
