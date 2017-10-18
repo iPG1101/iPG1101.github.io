@@ -57,7 +57,7 @@ JSNES.CPU.prototype = {
     reset: function() {
         // Main memory
         this.mem = new Array(0x10000);
-
+        // SNES has 4x as much RAM, that is a neccesary change
         for (var i=0; i < 0x2000; i++) {
             this.mem[i] = 0xFF;
         }
