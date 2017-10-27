@@ -271,7 +271,7 @@ var Game = {
     player: new Player(0),
     entities: [],
     framerate: 60,
-    behindTheScenes: {
+    behindTheScenes: { 
         lastFrame: new Date().getTime()
     },
     frame: function () {
