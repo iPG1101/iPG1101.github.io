@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var BUILD_NUMBER = "126D";
+var BUILD_NUMBER = "127D";
 var c = document.createElement("canvas"), ctx = c.getContext("2d");
 var WIDTH = 720, HEIGHT = 360;
 var Entity = /** @class */ (function () {
@@ -303,7 +303,7 @@ var Game = {
         c.height = HEIGHT;
         ctx.imageSmoothingEnabled = false;
         Game.refreshLevel();
-        Game.popupbox('<b>Oh no!</b><br/><br/>You were flying your SpaceCraft, but you got hit by a meteorite while moving at 952 kilometres per hour! You need to get to the nearest village, SunTown! It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/><br/><b style=\'color: red\'>NOTE: Game is in EARLY BETA (build ' + BUILD_NUMBER + '), expect bugs/glitches/crashes!</b>', ["Ok, I'm ready!"], [Game.frame]);
+        Game.popupbox('<b>Oh no!</b><br/><br/>You were flying your SpaceCraft, but you got hit by a meteorite while moving at 952 kilometres per hour! You need to get to the nearest village, SunTown! It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/><br/><b style=\'color: red\'>NOTE: Game is in EARLY BETA (build ' + BUILD_NUMBER + '), expect bugs/glitches/crashes!</b><br/><br/>Credits: <br/> Mr.Stahlmann - Level 5, Mr.Velasco - Level6, LazyJimmyVP - Levels 1-4 &amp; textures, iPhoneGuy1101 (iPG1101@aol.com) - Programming', ["Ok, I'm ready!"], [Game.frame]);
     },
     showLoadingScreen: function () {
         var mobile = /iPad|iPhone|iPod|Android|Phone|Touch|Tablet/i.test(navigator.userAgent || navigator.vendor || window['opera']);
