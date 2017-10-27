@@ -261,7 +261,7 @@ var Game = {
         var request = new XMLHttpRequest();
         request.open('GET', url, false);
         request.send(null);
-        return eval(request.responseText);
+        return eval("("+request.responseText+")");
     },
     levels: new Array(5), 
     crLevel: 0,
