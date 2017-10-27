@@ -216,7 +216,7 @@ var Player = /** @class */ (function (_super) {
             this.fuel += 0.35;
             for (var i in Game.entities) {
                 if (!Game.entities[i].checkCollision(this.x + this.velX, this.y - 2)) {
-                    // this.velX = 0;
+                    // this.velX = 0; 
                     moveX = false; //If you are going to collide with an object if you go any more to the side, then do not do it!
                 }
             }
