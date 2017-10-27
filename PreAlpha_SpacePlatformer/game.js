@@ -263,7 +263,7 @@ var Game = {
         request.send(null);
         return eval("("+request.responseText+")");
     },
-    levels: new Array(5), 
+    levels: new Array(6), 
     crLevel: 0,
     getLevel: function () {
         return Game.levels[Game.crLevel];
