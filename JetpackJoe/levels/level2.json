@@ -1,0 +1,11 @@
+({
+	playertexture: 0,
+	gravityForce: 0.03,
+	entities: [
+		new Block(2,249,200,26),
+		new Block(579,227,134,33),
+		new Block(885,103,132,32),
+		new Block(1600,302,413,28),
+		new Finish(2003)
+	]
+})

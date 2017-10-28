@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Level Editor 2.0</title>
+	<style>
+		*{padding:0;margin:0;position:absolute;border: solid 1px black;}
+	</style>
+</head>
+<body>
+	<script>
+		var level = {gravityForce: 0.03, entities: []};
+		var c = document.createElement('canvas');
+		c.width = 6400;
+		c.height = 360;
+		document.body.appendChild(c);
+		var ctx = c.getContext('2d');
+		c.onmousedown = function(e){
+			startX = e.pageX;
+			startY = e.pageY;
+		};
+		function En(x,y,ex,ey){
+			this.x = x; this.y = y;
+			 this.ex = ex; this.ey = ey;
+			this.show = function(){
+				ctx.fillRect(this.x,this.y,this.ex-this.x,this.ey-this.y);
+			};
+		};
+		c.onmousemove = function(e){
+			endX = e.pageX;
+			endY = e.pageY;
+			ctx.clearRect(0,0,6400,360);
+			ctx.fillRect(startX, startY, endX-startX, endY-startY);
+			for(var i in level.entities){level.entities[i].show();};
+		}
+		c.onmouseup = function(e){
+			level.entities.push(new En(startX,startY,endX,endY));
+			startX = undefined;
+			startY = undefined;
+		};
+		Export = function(){
+			var t = level;
+			var entities = [];
+			for(var i of level.entities) {
+				var x = i.x;
+				var y = i.y;
+				var w = i.ex - i.x;
+				var h = i.ey - i.y;
+				entities.push('new Block('+[x,y,w,h].join()+')')
+			}
+			var i = '{gravityForce: 0.03, entities: ['+(entities.join())+']}'
+			return i;
+		}
+		//
+	</script>
+</body>
+</html>

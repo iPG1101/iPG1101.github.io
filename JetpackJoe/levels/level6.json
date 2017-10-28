@@ -1,0 +1,13 @@
+({playertexture: 0, gravityForce: 0.028, entities: [new Block(32,76,80,5),
+new Block(131,133,68,36),
+new Block(217,228,53,7),
+new Block(311,280,138,20),
+new Block(604,104,51,54),
+new Block(906,57,17,3),
+new Block(826,50,90,103),
+new Block(1300,91,131,27),
+new Block(1061,107,144,19),
+new Block(1512,158,30,154),
+new Block(1659,46,21,173),
+new Block(1791,160,123,59),
+new Finish(2021)]})

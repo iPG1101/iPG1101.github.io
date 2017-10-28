@@ -1,0 +1,11 @@
+({
+	gravityForce: 0.0275,
+	playertexture: 0,
+	entities: [
+		new Decoration('flame_ship.png',20,152,122,152,[2,16,16],true),
+		new Decoration('spaceship.png',0,222,192,96,[0],true),
+		new Block(67,281,354,44),
+		new Block(907,276,364,57),
+		new Finish(1250)
+	]
+})
