@@ -25,6 +25,6 @@
     new Block(2050,359,0,0),
     new Block(1927,327,133,27),
     new Block(2069,223,149,39),
-    new Block(2299,16,-27,318)
+    new Finish(2299)
   ]
 })
