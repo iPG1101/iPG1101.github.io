@@ -1,0 +1,30 @@
+({
+  gravityForce: 0.035,
+  playertexture: 0,
+  entities: [
+    new Block(42,290,252,39),
+    new Block(388,243,174,41,[2,2]),
+    new Block(600,252,64,44,[0,2]), //These are falling blocks,
+    new Block(680,252,64,40,[2,0]), //they are darker as well (visual indication)
+    new Block(611,139,53,41), //new Block(x,y,w,h,{optional [textureX, textureY]})
+    new Block(883,143,70,38), //if w or h is negative then it's a ghost
+    new Block(781,246,64,40), //was a bug, now a feature :p
+    new Block(1017,225,158,46),
+    new Block(1264,109,187,42),
+    new Block(1493,189,124,49),
+    new Block(1622,285,88,46),
+    new Block(1709,342,118,21),
+    new Block(2015,363,0,0),
+    new Block(1880,362,0,0),
+    new Block(1866,360,0,0),
+    new Block(1845,360,0,0),
+    new Block(1823,360,0,0),
+    new Block(1823,358,0,0),
+    new Block(1880,363,0,0),
+    new Block(1827,357,84,1),
+    new Block(2050,359,0,0),
+    new Block(1927,327,133,27),
+    new Block(2069,223,149,39),
+    new Block(2299,16,-27,318)
+  ]
+})

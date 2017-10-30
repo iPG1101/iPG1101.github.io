@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var BUILD_NUMBER = "138F";
+var BUILD_NUMBER = "1.0-RC1_291017956p";
 var c = document.createElement("canvas"), ctx = c.getContext("2d");
 var WIDTH = 720, HEIGHT = 360;
 var Entity = (function () {
@@ -143,11 +143,12 @@ var Enemy = (function (_super) {
 ;
 var Block = (function (_super) {
     __extends(Block, _super);
-    function Block(x, y, w, h) {
-        var _this = _super.call(this, 'block.png', 'block.png', x, y) || this;
+    function Block(x, y, w, h, c) {
+        var _this = _super.call(this, 'block.png', undefined, x, y) || this;
         _this.w = 0;
         _this.h = 0;
-        _this.checkCollision = function (x, y) {
+        _this.coords = new Array(2);
+        _this.checkCollision = function (x, y, z) {
             var nc = !(this.x < x && this.x + this.w > x && this.y <= y - 8 && this.y + this.h >= y); //Not colliding
             if (!nc /*if colliding*/) {
                 if (x < this.x + this.w / 2 && x == Game.player.x)
@@ -155,11 +156,51 @@ var Block = (function (_super) {
                 if (x > this.x + this.w / 2 && x == Game.player.x)
                     Game.player.velX += 0.25;
             }
+            if ((this.x < x && this.x + this.w > x && this.y <= y && this.y + this.h + 2 >= y) && z instanceof Player) {
+                if (this.coords[0] == 2 || this.coords[1] == 2) {
+                    var coords = this.coords;
+                    //Special powers...?!?!
+                    if (coords.join(',') == '2,0') {
+                        //Quick regen of jetpack fuel
+                        z.fuel += 3;
+                        z.fuel = z.fuel < 100 ? z.fuel : 100;
+                    }
+                    if (coords.join(',') == '2,1') {
+                        z.velX = z.velX > 0 ? 6 : z.velX < 0 ? -6 : 0;
+                    }
+                    if (coords.join(',') == '2,2') {
+                        //Bounce
+                        z.bouncing = z.velY * 0.6;
+                        if (Math.abs(z.velY) < 0.9)
+                            z.velY = z.bouncing = 0;
+                    }
+                    if (coords.join(',') == '0,2') {
+                        setTimeout(function () { this.falling = true; }.bind(this), 300);
+                    }
+                }
+            }
             return !(this.x < x && this.x + this.w > x && this.y <= y && this.y + this.h + 2 >= y);
         };
+        _this.falling = false;
         _this.show = function () {
-            ctx.drawImage(this.texture[0], this.x - Game.player.x + WIDTH / 2 - 32, this.y, this.w, this.h);
+            var coords = [this.coords[0] * 16, this.coords[1] * 16];
+            ctx.drawImage(this.texture[0], coords[0], coords[1], 16, 16, this.x - Game.player.x + WIDTH / 2 - 32, this.y, this.w, this.h);
+            // this.update();
         };
+        _this.update = function () {
+            this.x += this.velX;
+            this.y += this.velY;
+            if (this.falling)
+                this.velY += Game.getLevel().gravityForce * 1.02;
+        };
+        if (c != undefined) {
+            _this.coords[0] = c[0];
+            _this.coords[1] = c[1];
+        }
+        else {
+            _this.coords[0] = 1;
+            _this.coords[1] = 0;
+        }
         _this.w = w;
         _this.h = h;
         return _this;
@@ -244,6 +285,7 @@ var Player = (function (_super) {
         _this.lives = 3;
         _this.velY = 2;
         _this.jetpacking = false;
+        _this.bouncing = 0;
         _this.image = new Image();
         _this.jp = new Image();
         _this.flame = new Image();
@@ -254,8 +296,19 @@ var Player = (function (_super) {
                 this.velY -= 0.225;
             this.fuel -= 2;
             this.velY -= 0.065;
-            if (this.velY < -2)
-                this.velY = -2;
+            if (this.velY < -2.5)
+                this.velY = -2.5;
+        };
+        _this.bounce = function () {
+            this.velY -= 0.225;
+            this.bouncing -= 0.225;
+            if (this.velY >= 0)
+                this.velY -= 0.225;
+            if (this.bouncing < 0.1)
+                this.bouncing = 0;
+            this.velY -= 0.065;
+            if (this.velY < -2.5)
+                this.velY = -2.5;
         };
         _this.die = function () {
             if (this.lives > 0) {
@@ -277,9 +330,11 @@ var Player = (function (_super) {
         };
         _this.update = function () {
             var moveX = true;
+            if (this.bouncing)
+                this.bounce();
             if (this.jetpacking)
                 this.jetpack();
-            if (this.y > HEIGHT)
+            if (this.y - this.velY - this.velY > HEIGHT)
                 this.die();
             if (this.velX < 0)
                 this.facing = 0;
@@ -287,7 +342,12 @@ var Player = (function (_super) {
                 this.facing = 1;
             this.fuel += 0.35;
             for (var i in Game.entities) {
-                if (!Game.entities[i].checkCollision(this.x + this.velX, this.y - 2)) {
+                var temp = Game.entities[i].checkCollision(this.x + this.velX, this.y - 2, this) &&
+                    Game.entities[i].checkCollision(this.x + this.velX, this.y - 31, this) &&
+                    Game.entities[i].checkCollision(this.x + this.velX, this.y - 46, this) &&
+                    Game.entities[i].checkCollision(this.x + this.velX, this.y - 71, this) &&
+                    Game.entities[i].checkCollision(this.x + this.velX, this.y - 96, this);
+                if (!(temp)) {
                     // this.velX = 0;
                     moveX = false; //If you are going to collide with an object if you go any more to the side, then do not do it!
                 }
@@ -297,7 +357,7 @@ var Player = (function (_super) {
             if (this.fuel >= 100)
                 this.fuel = 99.9;
             for (var i in Game.entities) {
-                if (!Game.entities[i].checkCollision(this.x, this.y + this.velY)) {
+                if (!(Game.entities[i].checkCollision(this.x, this.y + this.velY, this))) {
                     this.velY = 0;
                     return; //If you are going to collide with an object if you go any lower, then do not do it!
                 }
@@ -348,7 +408,7 @@ var Game = {
         request.send(null);
         return eval(request.responseText);
     },
-    levels: new Array(6),
+    levels: new Array(7),
     crLevel: 0,
     getLevel: function () {
         return Game.levels[Game.crLevel];
@@ -388,7 +448,12 @@ var Game = {
         c.height = HEIGHT;
         ctx.imageSmoothingEnabled = false;
         Game.refreshLevel();
-        Game.popupbox('<b>Oh no!</b><br/><br/>You were flying your SpaceCraft, but you got hit by a meteorite while moving at ' + Math.floor(Math.random() * 500 + 500) + ' kilometres per hour! You need to get to the nearest village, SunTown! It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/><br/><b style=\'color: red\'>NOTE: Game is in EARLY BETA (build ' + BUILD_NUMBER + '), expect bugs/glitches/crashes!</b><br/><br/>Credits: <br/>Mr. Stahlmann, Mr. Velasco, Lazy Jimmy (levels)<br/>Jimmy (art)<br/>iPhoneGuy1101 (Programming/Animation)<br/>', ["Ok, I'm ready!"], [Game.frame]);
+        Game.popupbox('<b>Oh no!</b><br/><br/>You were flying your SpaceCraft, but you got hit by a meteorite while moving at '
+            + Math.floor(Math.random() * 500 + 500) + ' kilometres per hour! You need to get to the nearest village, SunTown!\
+			 It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/>\
+			 <b style=\'color: green\'>\
+			  Game is no longer in beta!\
+			   You\'re on build <a style=\'font-size: 60%\'>' + BUILD_NUMBER + '</a>, report bugs/glitches/crashes!</b><br/>Credits: <br/>Mr. Stahlmann, Mr. Velasco, Lazy Jimmy (levels)<br/>Jimmy (art)<br/>iPhoneGuy1101 (Programming/Animation)<br/>', ["Ok, I'm ready!"], [Game.frame]);
     },
     showLoadingScreen: function () {
         var mobile = /iPad|iPhone|iPod|Android|Phone|Touch|Tablet|Mobi/i.test(navigator.userAgent || navigator.vendor || window['opera']);
@@ -448,6 +513,7 @@ var Game = {
         popup.style.top = '12.5%';
         popup.style.left = '12.5%';
         popup.style.border = 'double 4px gold';
+        popup.style.overflow = 'auto';
         popup.style.fontSize = '24px';
         popup.style.background = 'black';
         popup.style.color = 'white';
@@ -465,7 +531,9 @@ var Game = {
             temp.id = i;
             temp.style.background = '#333';
             temp.style.position = 'absolute';
-            temp.style.bottom = '1%';
+            temp.style.bottom = '0';
+            temp.style.padding = '2%';
+            temp.style.borderRadius = '50%';
             temp.style[(a[i] == a[0]) ? 'left' : 'right'] = '0';
             popup.appendChild(temp);
         }
