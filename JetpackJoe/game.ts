@@ -1,4 +1,4 @@
-const BUILD_NUMBER: string = "1.0-RC1_291017956p";
+const BUILD_NUMBER: string = "1.0-RC2_31117505p";
 
 
 var c: HTMLCanvasElement = document.createElement("canvas"),
@@ -342,7 +342,7 @@ var Game = {
 		request.send(null);
 		return eval(request.responseText);
 	},
-	levels: new Array(7),
+	levels: new Array(8),
 	crLevel: 0,
 	getLevel: function(){
 		return Game.levels[Game.crLevel];
