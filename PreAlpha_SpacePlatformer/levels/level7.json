@@ -1,0 +1,21 @@
+({playertexture: 0, gravityForce: 0.0295, entities: [
+  new Block(91,257,323,27,[2,0]),
+  new Block(480,185,365,42),
+  new Block(957,24,502,73),
+  new Block(1791,226,445,40),
+  new Block(2387,108,84,56,[2,0]),
+  new Block(2698,55,62,55,[0,2]),
+  new Block(2892,179,70,43),
+  new Block(3091,251,99,58,[0,2]),
+  new Block(3302,142,103,70),
+  new Block(3516,143,340,58),
+  new Block(3985,143,334,75),
+  new Block(4459,292,260,37,[2,2]),
+  new Block(4812,44,39,73),
+  new Block(4807,233,56,89),
+  new Block(4980,250,213,64,[0,2]),
+  new Block(5079,128,322,65),
+  new Block(5663,244,379,65),
+  new Block(6201,79,167,213),
+  new Finish(6501)
+]})
