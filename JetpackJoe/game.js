@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var BUILD_NUMBER = "1.0-RC1_291017956p";
+var BUILD_NUMBER = "1.0-RC2_31117505p";
 var c = document.createElement("canvas"), ctx = c.getContext("2d");
 var WIDTH = 720, HEIGHT = 360;
 var Entity = (function () {
@@ -408,7 +408,7 @@ var Game = {
         request.send(null);
         return eval(request.responseText);
     },
-    levels: new Array(7),
+    levels: new Array(8),
     crLevel: 0,
     getLevel: function () {
         return Game.levels[Game.crLevel];
