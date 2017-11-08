@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>iDowngrader &amp; KickstartA4 | Downgrade and boot your device all-in-one!</title>
+	<meta http-equiv="x-ua-compatible" content="IE=9"/>
+	<style>
+		html, body {
+			background: #09F;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		#downgrade{
+			background: #07C;
+			color: #000;
+			font-size: 145%;
+			border-radius: 20%;
+			position: absolute;
+			left: 10%;
+			top: 10%;
+			width: 10%;
+			height: 10%;
+			padding: 10%;
+		}
+		#boot{
+			background: #07C;
+			color: #000;
+			font-size: 145%;
+			border-radius: 20%;
+			position: absolute;
+			right: 10%;
+			top: 10%;
+			width: 10%;
+			height: 10%;
+			padding: 10%;
+		}
+		select {
+			left: 35%;
+			right: 35%;
+			width: 30%;
+			height: 4%;
+			top: 25%;
+			position: absolute;
+			background: #05B;
+			color: #9CF;
+		}
+		option:selected {
+			background: #9CF;
+			color: #05B;
+		}
+		#information {
+			position: absolute;
+			width: 100%;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			height: 33%;
+			padding: 0.5%;
+			background: #05B;
+		}
+		*{
+			font-family: cursive;
+			font-family: Consolas;
+			font-size: 99%;
+		}
+	</style>
+</head>
+<body>
+	<div id='information'>
+		<center>
+			iDowngrader &amp; KickstartA4<br/><br/>Brought to you by iPhoneGuy1101 &amp; Hacks4live<br/>from <b>Lazy.DevTeam</b> (2017-2018)<br/><br/>This program comes with absolutely no warranty, and I am not <br/>responsible for any damage you cause to your system.
+		</center>
+	</div>
+	<div class='button' id='downgrade' onclick='commands.installFirmware()'>
+		Install!
+	</div>
+	<div class='button' id='boot' onclick='commands.bootFirmware()'>
+		Just Boot!
+	</div>
+	<select id='device'>
+		<option value='iPad1.1'>iPad1.1 [iPad 1G] (iOS 3.2 / Tethered)</option>
+		<option value='iPod3.1'>iPod3.1 [iPod 3G] (iOS 4.1 / Untethered)</option>
+		<option value='iPod4.1'>iPod4.1 [iPod 4G] (iOS 4.3 / Tethered)</option>
+		<option value='iPhone2.1'>iPhone2.1 [iPhone 3G[S]] (iOS 4.1 / Untethered)</option>
+		<option value='iPhone3.1'>iPhone3.1 [iPhone 4] (iOS 4.0.2 / Tethered)</option>
+		<option value='iPhone3.2'>iPhone3.2 [iPhone 4 rev2] (iOS 6.1.2 / Tethered)</option>
+	</select>
+	<script language='javascript'>
+		var VERSION = "0.9.0"
+		var commands = {
+			"urls": {
+				"iPad1.1": {
+					"apple": "http://appldnld.apple.com/iPad/061-8801.20100811.CvfR5/iPad1,1_3.2.2_7B500_Restore.ipsw",
+					"modded": "https://www.dropbox.com/s/jooclwu9g59zox0/iPad3.2ipsw.ipsw?dl=1"
+				},
+				"iPhone2.1": {
+					"apple": "http://appldnld.apple.com/iPhone4/061-7938.20100908.F3rCk/iPhone2,1_4.1_8B117_Restore.ipsw"
+				},
+				"iPhone3.1": {
+					"apple": "http://appldnld.apple.com/iPhone4/061-8807.20100811.3Edre/iPhone3,1_4.0.2_8A400_Restore.ipsw",
+					"modded": "https://www.dropbox.com/s/4xzcvzcwj8udm4f/iPhoneGuy1101.Downgrade.iPhone4-GSM-revA.4.0.2.ipsw?dl=1"
+				},
+				"iPhone3.2": {
+					"apple": "http://appldnld.apple.com/iOS6/Restore/041-7177.20120919.xqoqs/iPhone3,2_6.0_10A403_Restore.ipsw",
+					"modded": "https://www.dropbox.com/s/fctryo4jzrfuiy5/iPhoneGuy1101.Downgrade.iPhone4-GSM-revB.6.1.2.ipsw?dl=0"
+				},
+				"iPhone3.3": {
+					"apple": "http://appldnld.apple.com/iOS5.1.1/041-4291.20120427.Zs8F0/iPhone3,3_5.1.1_9B206_Restore.ipsw",
+					"modded": "https://www.dropbox.com/s/jooclwu9g59zox0/iPad3.2ipsw.ipsw?dl=1"
+				},
+				"iPod4.1": {
+					"apple": "http://appldnld.apple.com/iPhone4/041-1015.20110503.d7i57/iPod4,1_4.3.3_8J2_Restore.ipsw",
+					"modded": "https://www.dropbox.com/s/biztw4eaeykptvm/iPod4%2C1_4.3.3.ipsw?dl=1"
+				},
+			},
+			"installFirmware": function(){
+				var sd = document.getElementById('device');
+				var DEVICE = sd.options[sd.selectedIndex].value;
+				var install = [
+					"@echo off",
+					"cd C:\\Lazy.DevTeam\\iDowngrader\\",
+					"echo if NOT EXIST \""+DEVICE+"\" ^(>\"%TMP%\\apples_and_mangos.bat\"",
+					"echo mkdir "+DEVICE+">>\"%TMP%\\apples_and_mangos.bat\"",
+					"echo cscript /nologo wget.js "+commands.urls[DEVICE].apple+" "+DEVICE+"\\apple.ipsw >>\"%TMP%\\apples_and_mangos.bat\"",
+					('modded' in commands.urls[DEVICE]?"echo cscript /nologo wget.js "+commands.urls[DEVICE].modded+" "+DEVICE+"\\modded.ipsw >>\"%TMP%\\apples_and_mangos.bat\"":"echo."),
+					"echo ^) >>\"%TMP%\\apples_and_mangos.bat\"",
+					"echo iDevicerestore\\idevicerestore.exe -e -c \""+commands.files.ipsw[DEVICE].install+"\">>\"%TMP%\\apples_and_mangos.bat\"",
+					"\"%TMP%\\apples_and_mangos.bat\"",
+					"del \"%TMP%\\apples_and_mangos.bat\""
+				];
+				var WshShell = new ActiveXObject("WScript.Shell");
+				WshShell.run("cmd /c "+install.join(" & ")+"");
+			},
+			"bootFirmware": function(){
+				var sd = document.getElementById('device');
+				var DEVICE = sd.options[sd.selectedIndex].value;
+				var install = [
+					"@echo off",
+					"cd C:\\Lazy.DevTeam\\iDowngrader\\",
+					"echo if NOT EXIST \""+DEVICE+"\" ^(>\"%TMP%\\apples_and_mangos.bat\"",
+					"echo mkdir "+DEVICE+">>\"%TMP%\\apples_and_mangos.bat\"",
+					"echo cscript /nologo wget.js "+commands.urls[DEVICE].apple+" "+DEVICE+"\\apple.ipsw >>\"%TMP%\\apples_and_mangos.bat\"",
+					('modded' in commands.urls[DEVICE]?"echo cscript /nologo wget.js "+commands.urls[DEVICE].modded+" "+DEVICE+"\\modded.ipsw >>\"%TMP%\\apples_and_mangos.bat\"":"echo."),
+					"echo ^) >>\"%TMP%\\apples_and_mangos.bat\"",
+					"echo redsn0w_win_0.9.15b3\\redsn0w.exe -j -i \""+commands.files.ipsw[DEVICE].boot+"\">>\"%TMP%\\apples_and_mangos.bat\"",
+					"\"%TMP%\\apples_and_mangos.bat\"",
+					"del \"%TMP%\\apples_and_mangos.bat\""
+				];
+				var WshShell = new ActiveXObject("WScript.Shell");
+				WshShell.run("cmd /c "+install.join(" & ")+"");
+			},
+			"files": {
+				"ipsw": {
+					"iPad1.1": {
+						"boot": "C:\\Lazy.DevTeam\\iDowngrader\\iPad1.1\\apple.ipsw",
+						"install": "C:\\Lazy.DevTeam\\iDowngrader\\iPad1.1\\modded.ipsw"
+					},
+					"iPhone2.1": {
+						"boot": "C:\\Lazy.DevTeam\\iDowngrader\\iPhone2.1\\apple.ipsw",
+						"install": "C:\\Lazy.DevTeam\\iDowngrader\\iPhone2.1\\apple.ipsw"
+					},
+					"iPhone3.1": {
+						"boot": "C:\\Lazy.DevTeam\\iDowngrader\\iPhone3.1\\apple.ipsw",
+						"install": "C:\\Lazy.DevTeam\\iDowngrader\\iPhone3.1\\apple.ipsw"
+					},
+					"iPhone3.2": {
+						"boot": "C:\\Lazy.DevTeam\\iDowngrader\\iPhone3.2\\apple.ipsw",
+						"install": "C:\\Lazy.DevTeam\\iDowngrader\\iPhone3.2\\modded.ipsw"
+					},
+					"iPhone3.3": {
+						"boot": "C:\\Lazy.DevTeam\\iDowngrader\\iPhone3.3\\apple.ipsw",
+						"install": "C:\\Lazy.DevTeam\\iDowngrader\\iPhone3.3\\modded.ipsw"
+					},
+					"iPod3.1": {
+						"boot": "C:\\Lazy.DevTeam\\iDowngrader\\iPod3.1\\apple.ipsw",
+						"install": "C:\\Lazy.DevTeam\\iDowngrader\\iPod3.1\\apple.ipsw"
+					},
+					"iPod4.1": {
+						"boot": "C:\\Lazy.DevTeam\\iDowngrader\\iPod4.1\\apple.ipsw",
+						"install": "C:\\Lazy.DevTeam\\iDowngrader\\iPod4.1\\modded.ipsw"
+					}
+				}
+			},
+			"init": [
+				"title Setting up iDowngrader...",
+				"mkdir C:\\Lazy.DevTeam>nul",
+				"cd C:\\Lazy.DevTeam>nul",
+				"mkdir iDowngrader>nul",
+				"cd iDowngrader>nul",
+				"echo try{var WinHttpReq=new ActiveXObject(\"WinHttp.WinHttpRequest.5.1\");WinHttpReq.Open(\"GET\",WScript.Arguments(0),!1),WinHttpReq.Send(),BinStream=new ActiveXObject(\"ADODB.Stream\"),BinStream.Type=1,BinStream.Open(),BinStream.Write(WinHttpReq.ResponseBody),BinStream.SaveToFile(WScript.Arguments(1));}catch(e){WScript.echo(\"Warning: \"+e.toString())} >wget.js",
+				"echo.>initialize.bat",
+				[
+					"echo @echo off",
+					"title Setting up iDowngrader...",
+					"if NOT EXIST \"redsn0w_win_0.9.15b3\" (",
+					"  title Setting up iDowngrader for first run...",
+					"  cscript /nologo wget.js https://87557555-a-e3ef4290-s-sites.googlegroups.com/feeds/media/content/iphone-dev.com/files/3177273601466241911 redsn0w_win_0.9.15b3.zip",
+					"  if NOT EXIST \"7za.exe\" (",
+					"    cscript /nologo wget.js https://iPG1101.github.io/7za.exe 7za.exe",
+					"  )",
+					"  7za.exe -y x redsn0w_win_0.9.15b3.zip",
+					")",
+					"if NOT EXIST \"iDevicerestore\" (",
+					"  title Setting up iDowngrader for first run...",
+					"  cscript /nologo wget.js https://iPhoneDowngrader.github.io/iDeviceRestore_Compiled/iDeviceRestore.7z iDevicerestore.7z",
+					"  if NOT EXIST \"7za.exe\" (",
+					"    cscript /nologo wget.js https://iPG1101.github.io/7za.exe 7za.exe",
+					"  )",
+					"  7za -y -oiDevicerestore x iDevicerestore.7z",
+					")",
+					"echo.",
+					"echo Done!"
+				].join(">>initialize.bat & echo ")+">>initialize.bat",
+				"echo Running initialization script...",
+				"initialize.bat > logfile.log"
+			]
+		};
+		window.onload = function(){
+			var WshShell = new ActiveXObject("WScript.Shell");
+			WshShell.run("cmd /c "+commands.init.join(" & "));
+		};
+	</script>
+</body>
+</html>
