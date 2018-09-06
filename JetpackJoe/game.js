@@ -89,14 +89,6 @@ var Enemy = (function (_super) {
                 this.velY = -2;
         };
         _this.update = function () {
-            //Q: Do I want to jetpack?
-            //A: Figure it out, dipshit. Do you want to die? Or jetpack?
-            //EDIT: Disabled, he kept doin' too much!
-            // this.jetpacking = true;
-            // for(let i: number = 0; i < HEIGHT; i+=5){
-            // 	for(let i2 in Game.entities) if(Game.entities[i2].checkCollision(this.x, i)&&Game.entities[i2].y>this.y+this.h/2) this.jetpacking = false;
-            // }
-            // if(this.jetpacking) this.jetpack();
             if (Game.player.x > this.x)
                 this.velX += 0.1;
             if (Game.player.x < this.x)
