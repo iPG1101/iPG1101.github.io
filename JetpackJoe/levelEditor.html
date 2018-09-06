@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Level Editor 2.0</title>
+	<title>Level Editor 2.01</title>
 	<style>
-		*{padding:0;margin:0;position:absolute;border: solid 1px black;}
+		*{padding:0;margin:0;position:absolute;top: 0; left: 0; border: solid 1px black;}
 	</style>
 </head>
 <body>
 	<script>
+        window.onerror=function(a,b,c,d,e){alert(a+'\n'+b+'\n'+c+'\n'+d+'\n'+e)};
 		var level = {gravityForce: 0.03, entities: []};
+        var startX = 0, startY = 0;
 		var c = document.createElement('canvas');
 		c.width = 6400;
 		c.height = 360;
@@ -18,6 +20,11 @@
 			startX = e.pageX;
 			startY = e.pageY;
 		};
+        c.ontouchstart = function(e){
+            e.preventDefault();
+			startX = e.changedTouches[0].pageX;
+			startY = e.changedTouches[0].pageY;
+		};
 		function En(x,y,ex,ey){
 			this.x = x; this.y = y;
 			 this.ex = ex; this.ey = ey;
@@ -26,8 +33,18 @@
 			};
 		};
 		c.onmousemove = function(e){
+            if(startX == undefined || startX == 0) return;
 			endX = e.pageX;
 			endY = e.pageY;
+			ctx.clearRect(0,0,6400,360);
+			ctx.fillRect(startX, startY, endX-startX, endY-startY);
+			for(var i in level.entities){level.entities[i].show();};
+		};
+		c.ontouchmove = function(e){
+            if(startX == undefined || startX == 0) return;
+            e.preventDefault();
+			endX = e.changedTouches[0].pageX;
+			endY = e.changedTouches[0].pageY;
 			ctx.clearRect(0,0,6400,360);
 			ctx.fillRect(startX, startY, endX-startX, endY-startY);
 			for(var i in level.entities){level.entities[i].show();};
@@ -37,14 +54,20 @@
 			startX = undefined;
 			startY = undefined;
 		};
+		c.ontouchend = function(e){
+            e.preventDefault();
+			level.entities.push(new En(startX,startY,endX,endY));
+			startX = undefined;
+			startY = undefined;
+		};
 		Export = function(){
 			var t = level;
 			var entities = [];
 			for(var i of level.entities) {
-				var x = i.x;
-				var y = i.y;
-				var w = i.ex - i.x;
-				var h = i.ey - i.y;
+				var x = Math.floor(i.x);
+				var y = Math.floor(i.y);
+				var w = Math.floor(i.ex - i.x);
+				var h = Math.floor(i.ey - i.y);
 				entities.push('new Block('+[x,y,w,h].join()+')')
 			}
 			var i = '{gravityForce: 0.03, entities: ['+(entities.join())+']}'
