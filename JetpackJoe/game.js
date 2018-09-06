@@ -381,6 +381,7 @@ var Player = (function (_super) {
             ctx.font = '20px Ariel';
             ctx.fillStyle = 'rgb(0,127,255)';
             ctx.fillText('Lives: ' + this.lives, 4, 18);
+            ctx.fillText('Level: ' + Game.crLevel, 4, 38);
             ctx.fillStyle = 'rgb(RED,GREEN,0)'
                 .replace(/RED/g, (255 - Math.floor(2.55 * this.fuel)).toString())
                 .replace(/GREEN/g, (Math.floor(2.55 * this.fuel)).toString());
@@ -453,7 +454,7 @@ var Game = {
 			 It is 2 kilometres away from where you ended up stopping. You have a jetpack, and 3 lives. Good luck!<br/>\
 			 <b style=\'color: green\'>\
 			  Game is no longer in beta!\
-			   You\'re on build <a style=\'font-size: 60%\'>' + BUILD_NUMBER + '</a>, report bugs/glitches/crashes!</b><br/>Credits: <br/>Mr. Stahlmann, Mr. Velasco, Lazy Jimmy (levels)<br/>Jimmy (art)<br/>iPhoneGuy1101 (Programming/Animation)<br/>', ["Ok, I'm ready!"], [Game.frame]);
+			   You\'re on build <a style=\'font-size: 60%\'>' + BUILD_NUMBER + '</a>, report bugs/glitches/crashes!</b><br/>Credits: <br/>Mr. Stahlmann, Mr. Velasco, Lazy Jimmy (levels)<br/>Jimmy (art)<br/>iPG1101@aol.com (John J - Programming/Animation)<br/>', ["Ok, I'm ready!"], [Game.frame]);
     },
     showLoadingScreen: function () {
         var mobile = /iPad|iPhone|iPod|Android|Phone|Touch|Tablet|Mobi/i.test(navigator.userAgent || navigator.vendor || window['opera']);
