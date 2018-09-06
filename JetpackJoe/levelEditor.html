@@ -1,21 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Level Editor 2.01</title>
+	<title>Level Editor 2.02</title>
 	<style>
-		*{padding:0;margin:0;position:absolute;top: 0; left: 0; border: solid 1px black;}
+		canvas,body{padding:0;margin:0;position:absolute;top: 0; left: 0; border: solid 1px black;}
+        p {
+            position: absolute;
+            top: 440px;
+            width: 100vw;
+        }
+        button {
+            top: 380px;
+            width: 256px;
+            height: 60px;
+            right: 80px;
+        }
+        textarea {
+            width: 90vw;
+            font-size: 150%;
+        }
 	</style>
 </head>
 <body>
 	<script>
         window.onerror=function(a,b,c,d,e){alert(a+'\n'+b+'\n'+c+'\n'+d+'\n'+e)};
-		var level = {gravityForce: 0.03, entities: []};
-        var startX = 0, startY = 0;
+		var level = {gravityForce: 0.03, playertexture: 1, entities: []};
+        var startX = 0, startY = 0, endX, endY;
 		var c = document.createElement('canvas');
 		c.width = 6400;
 		c.height = 360;
 		document.body.appendChild(c);
 		var ctx = c.getContext('2d');
+        var f = document.createElement("p");
+        f.innerHTML = "This level editor is broken, and I don't wanna fix it, so you have to drag from top left of the block your making down and right. Otherwise it won't work. You will figure it out. It also doesn't support special (insta-regen, falling, bouncing, etc.) platforms, as that was not a thing when I created this level editor originally. v2.0 was from November, 5, 2017. v2.01 (the one adding this and preventing so-called \"negative size blocks\") came out Sept 5, 2018. Almost a year later. My old code was the worst thing imaginable, so I don't want to learn what I thought worked well actually did (I've had cases changing 50-1 to 49 somehow causes an error, even though 50-1==49). It also now automatically makes the last block you place into a finish line, so you can beat the levels you make now :D. <br/><br/>TL;DR: This level editor is s***. It always will be. I won't update it unless I get a valid reason too, as I am working on a <a href='https://ipg1101.github.io/iPlatformz'>newer, better game *here*</a>. Yes I know you have to jump over the slope it's broken rn.<br/><br/><textarea id='export' style=' height: 190px'></textarea>";
+        document.body.appendChild(f);
 		c.onmousedown = function(e){
 			startX = e.pageX;
 			startY = e.pageY;
@@ -27,25 +45,30 @@
 		};
 		function En(x,y,ex,ey){
 			this.x = x; this.y = y;
-			 this.ex = ex; this.ey = ey;
+		    this.ex = ex; this.ey = ey;
 			this.show = function(){
 				ctx.fillRect(this.x,this.y,this.ex-this.x,this.ey-this.y);
 			};
 		};
 		c.onmousemove = function(e){
-            if(startX == undefined || startX == 0) return;
-			endX = e.pageX;
-			endY = e.pageY;
-			ctx.clearRect(0,0,6400,360);
+            if(startX == undefined || startX == 0) return false;
+            e.preventDefault();
+            _endX = e.pageX;
+			_endY = e.pageY;
+            if(_endX < startX || _endY < startY) return false;
+			endX=_endX;endY=_endY;
+            ctx.clearRect(0,0,6400,360);
 			ctx.fillRect(startX, startY, endX-startX, endY-startY);
 			for(var i in level.entities){level.entities[i].show();};
 		};
 		c.ontouchmove = function(e){
-            if(startX == undefined || startX == 0) return;
+            if(startX == undefined || startX == 0) return false;
             e.preventDefault();
-			endX = e.changedTouches[0].pageX;
-			endY = e.changedTouches[0].pageY;
-			ctx.clearRect(0,0,6400,360);
+            _endX = e.changedTouches[0].pageX;
+			_endY = e.changedTouches[0].pageY;
+            if(_endX < startX || _endY < startY) return false;
+			endX=_endX;endY=_endY;
+            ctx.clearRect(0,0,6400,360);
 			ctx.fillRect(startX, startY, endX-startX, endY-startY);
 			for(var i in level.entities){level.entities[i].show();};
 		}
@@ -70,10 +93,26 @@
 				var h = Math.floor(i.ey - i.y);
 				entities.push('new Block('+[x,y,w,h].join()+')')
 			}
-			var i = '{gravityForce: 0.03, entities: ['+(entities.join())+']}'
+            if(!!entities.length) entities[entities.length-1] = entities[entities.length-1].replace(/Block/, 'Finish').split(',')[0]+')';
+			var i = '{gravityForce: 0.03, playertexture: 1, entities: ['+(entities.join())+']}'
 			return i;
 		}
-		//
+		Undo = function(){
+            level.entities.length --;
+            ctx.clearRect(0,0,3600,360);
+			for(var i of level.entities) {
+				var x = Math.floor(i.x);
+				var y = Math.floor(i.y);
+				var w = Math.floor(i.ex - i.x);
+				var h = Math.floor(i.ey - i.y);
+			    ctx.fillRect(x, y, w, h);
+			}
+        };
+        setInterval(()=>{
+            document.querySelector('#export').value = Export();
+        }, 100);
 	</script>
+    <button style='position: absolute; left: 0; bottom: 0;' onclick='document.body.innerHTML=Export()'>Export()</button>
+    <button style='position: absolute; left: 256px; bottom: 0;' onclick='Undo()'>Undo()</button>
 </body>
 </html>
