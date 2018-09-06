@@ -373,7 +373,7 @@ var Player = (function (_super) {
             ctx.font = '20px Ariel';
             ctx.fillStyle = 'rgb(0,127,255)';
             ctx.fillText('Lives: ' + this.lives, 4, 18);
-            ctx.fillText('Level: ' + Game.crLevel, 4, 38);
+            ctx.fillText('Level: ' + (Game.crLevel+1).toString(), 4, 38);
             ctx.fillStyle = 'rgb(RED,GREEN,0)'
                 .replace(/RED/g, (255 - Math.floor(2.55 * this.fuel)).toString())
                 .replace(/GREEN/g, (Math.floor(2.55 * this.fuel)).toString());
