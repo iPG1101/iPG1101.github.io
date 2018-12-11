@@ -22,17 +22,13 @@
         font: 200% Ariel;
         margin: 11%;
     }
-	    canvas {
-	    	style: width: 100vw; height: 100vh; z-index: -1;
-		    position: absolute; left: 0; top: 0;
-	    }
     right 
     {
         position: absolute; right: 0; bottom: 30px; display: none;
     }
     left 
     {
-        position: absolute; left: 0; bottom: 30px; display: none;
+        position: absolute; left: 0; bottom: 30px;
     }
 	   body{
 	    background: black;
@@ -251,8 +247,9 @@ function loadGame(evt){
     /*
      * Always show the widget. Useful for testing. Defaults to false.
      */
-    alwaysShow: true // @type {boolean}
+    alwaysShow: false // @type {boolean}
   };
 </script>
+	<script src="https://redalert.battleforthenet.com/widget.js" async></script>
 </body>
 </html>
