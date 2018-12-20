@@ -25,7 +25,7 @@
             };
             recognition.onend = function end() {
                 let xhr = new XMLHttpRequest;
-                xhr.open("POST", "http://twistcord.glitch.me/lol");
+                xhr.open("POST", "https://twistcord.glitch.me/lol");
                 xhr.send(document.querySelector('textarea').value);
             };
             recognition.onresult = function result(evt) {
