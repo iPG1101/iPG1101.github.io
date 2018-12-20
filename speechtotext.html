@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Speech test</title>
+        <style>
+            textarea {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 50vh;
+                font-size: 32px;
+            }
+        </style>
+        <script>
+            window.onerror = function(){alert(Array.from(arguments).join())};
+            var recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.onstart = function start() {
+                //
+            };
+            recognition.onerror = function error(evt) {
+                document.body.innerText = JSON.stringify(evt);
+            };
+            recognition.onend = function end() {
+                let xhr = new XMLHttpRequest;
+                xhr.open("POST", "http://twistcord.glitch.me/lol");
+                xhr.send(document.querySelector('textarea').value);
+            };
+            recognition.onresult = function result(evt) {
+                var text = '';
+                for(var i = evt.resultIndex; i < event.results.length; i++) {
+                    if(evt.results[i].isFinal) {
+                        document.querySelector('textarea').value = evt.results[i][0].transcript;
+                    } else {
+                        text += evt.results[i][0].transcript;
+                    };
+                };
+                document.querySelector('textarea').value = text ? text : document.querySelector('textarea').value;
+            };
+            var startListen = ()=>recognition.start();
+        </script>
+    </head>
+    <body>
+        <textarea></textarea>
+        <div style='margin-top: 52vh'>
+            <button onclick='startListen()'>startListen</button>
+        </div>
+    </body>
+</html>
