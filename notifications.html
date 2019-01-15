@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Notification Testing</title>
+        <script>
+            window.onload = function load(evt) {
+                if(Notification.permission == 'default') {
+                    Notification.requestPermission();
+                };
+                let notif = new Notification("Time", {
+                    body: new Date().toTimeString(),
+                    icon: "https://jdevteam2018.github.io/images/icon.png"
+                });
+                setTimeout(()=>{
+                    window.onload();
+                }, 900);
+            };
+        </script>
+    </head>
+    <body>
+        <!---->
+    </body>
+</html>
