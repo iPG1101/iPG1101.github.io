@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script>
+			window.onerror = function() {
+				alert(Array.from(arguments));
+			};
+		</script>
+		<script type='text/javascript'>
+			window.AudioContext = window.AudioContext || window.webkitAudioContext;
+			AudioContext.prototype.findASingularAutoTune = function(){
+				let bufferSize = 2048,
+					sampleRate = this.sampleRate;
+				let getNearestFreq = freq => {
+					let dist = (a,b)=>Math.abs(a-b),
+						val = 0, d_ = freq;
+					let possible = [130.81, 146.83, 164.81, 174.61, 196.00, 220.00, 246.94, 261.63, 293.66, 329.63, 349.23, 392.00, 440.00];
+					for(let i = 0; i < possible.length; i++) {
+						let d = dist(possible[i], freq);
+						if(d < d_) {
+							d_ = d;
+							val = possible[i];
+						};
+					};
+					return val;
+					let note = 12 * (Math.log(freq / 440) / Math.log(2)),
+						error = Math.min(note - Math.floor(note), Math.ceil(note) - note);
+					return (error > 0.3) ? null : 440 * Math.pow(2, Math.round(note) / 12);
+				}, fixFreq = (i, o) => {
+					let bestErr = 999,
+						bestOff = -1;
+					for(let off = 96; off < 240; off++) {
+						console.log(off);
+						let err = 0;
+						for(let x = 0; x < bufferSize / 2; x++) {
+							err += Math.abs(i[off + x] - i[x]);
+						};
+						if(err < bestErr) {
+							bestErr = err;
+							bestOff = off;
+						};
+					};
+					let bestFreq = sampleRate / bestOff,
+						goodFreq = getNearestFreq(bestFreq),
+						goodOff = sampleRate / goodFreq;
+					if(isNaN(goodOff) || isNaN(goodFreq) || goodFreq == null) {
+						for(let x = 0; x < o.length; x++) {
+							o[x] = i[x];
+						};
+						return o;
+					};
+					let arr = new Array(Math.floor(i.length * goodOff / bestOff));
+					for(let x = 0; x < arr.length; x++) {
+						let fl = x * bestOff / goodOff,
+							x1 = i[Math.floor(fl)],
+							x2 = i[Math.ceil(fl)],
+							c1 = fl - Math.floor(fl),
+							c2 = Math.ceil(fl) - fl;
+						arr[x] = x1 * c1 + x2 * c2;
+					};
+					for(let x = 0; x < o.length; x++) {
+						o[x] = arr[x];
+					};
+					return o;
+				};
+				let tuner = this.createScriptProcessor(bufferSize, 1, 1);
+				tuner.onaudioprocess = e => {
+					console.info("Audio Process");
+					let input = e.inputBuffer.getChannelData(0),
+						output = e.outputBuffer.getChannelData(0);
+					let out = fixFreq(input, output);
+					for(let i in out) output[i] = out[i];
+				};
+				return tuner;
+			};
+		</script>
+		<script type='text/javascript'>
+			window.addEventListener('DOMContentLoaded', e => {
+				let mode = 'mic';
+				switch(mode) {
+					case 'fetch':
+					case 'file':
+						fetch('14 Don\'t Pass Me By (Remastered 2009).mp3').then(res => {
+							res.arrayBuffer().then(arr => {
+								let audioCtx = new AudioContext();
+								audioCtx.decodeAudioData(arr, buffer => {
+									let inputNode = audioCtx.createBufferSource(),
+										tunerNode = audioCtx.findASingularAutoTune();
+									inputNode.buffer = buffer;
+									inputNode.connect(tunerNode);
+									tunerNode.connect(audioCtx.destination);
+									inputNode.start(0);
+								});
+							});
+						}).catch(err => {
+							alert("Unable to connect to server - are you online?");
+						});
+						break;
+					case 'microphone':
+					case 'mic':
+						navigator.mediaDevices.getUserMedia({
+							'audio': true,
+							'video': false
+						}).then(stream => {
+							let audioCtx = new AudioContext;
+							let inputNode = audioCtx.createMediaStreamSource(stream),
+								tunerNode = audioCtx.findASingularAutoTune();
+							inputNode.connect(tunerNode);
+							tunerNode.connect(audioCtx.destination);
+						}).catch(err => {
+							alert("Unable to get microphone access - did you accept it?\n\t" + err);
+						});
+						break;
+					default:
+						throw new Error("Unknown input mode!");
+				};
+			});
+		</script>
+	</head>
+	<body>
+		<p>So yeah, microphone input is required. No server involved.</p>
+	</body>
+</html>
